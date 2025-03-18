@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\UsersController;
+use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\BasicAuthMiddleware;
 use Illuminate\Support\Facades\Route;
 
@@ -10,7 +11,7 @@ use Illuminate\Support\Facades\Route;
 // })->middleware('auth:sanctum');
 
 Route::prefix('v1/')->group(function () {
-    Route::middleware([BasicAuthMiddleware::class])->prefix('admin')->group(function () {
+    Route::middleware([BasicAuthMiddleware::class, AdminMiddleware::class])->prefix('admin')->group(function () {
         Route::resource('users', UsersController::class);
     });
     Route::post('register', [AuthController::class, 'register']);
