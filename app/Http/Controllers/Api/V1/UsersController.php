@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class UsersController extends Controller
 {
@@ -30,15 +33,27 @@ class UsersController extends Controller
      */
     public function show(User $user)
     {
-        //
+        return response()->json($user, 200);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, User $user): JsonResponse
     {
-        //
+        // Validate request
+        $validated = $request->validate([
+            'role' => ['required', Rule::in(array_column(UserRole::cases(), 'value'))]
+        ]);
+
+        // Update role
+        $user->role = $validated['role'];
+        $user->save();
+
+        return response()->json([
+            'message' => 'User role updated successfully',
+            'user' => $user
+        ], 200);
     }
 
     /**
