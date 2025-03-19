@@ -10,10 +10,15 @@ use Illuminate\Support\Facades\Route;
 //     return $request->user();
 // })->middleware('auth:sanctum');
 
-Route::prefix('v1/')->group(function () {
-    Route::middleware([BasicAuthMiddleware::class, AdminMiddleware::class])->prefix('admin')->group(function () {
-        Route::apiResource('users', UsersController::class);
-        Route::post('register', [AuthController::class, 'register']);
+Route::prefix('v1')->group(function () {
+
+    Route::middleware(BasicAuthMiddleware::class)->group(function () {
+
+        Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
+            Route::apiResource('users', UsersController::class);
+            Route::post('register', [AuthController::class, 'register']);
+        });
+
     });
 });
 
