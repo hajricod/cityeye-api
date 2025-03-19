@@ -2,7 +2,7 @@
 
 namespace App\Enums;
 
-enum UserRole: string
+enum AuthorizationLevel: string
 {
     case Low       = 'low';
     case Medium    = 'medium';
