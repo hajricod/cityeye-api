@@ -12,7 +12,7 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1/')->group(function () {
     Route::middleware([BasicAuthMiddleware::class, AdminMiddleware::class])->prefix('admin')->group(function () {
-        Route::resource('users', UsersController::class);
+        Route::apiResource('users', UsersController::class);
     });
     Route::post('register', [AuthController::class, 'register']);
 });
