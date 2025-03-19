@@ -57,6 +57,35 @@ class UsersController extends Controller
     }
 
     /**
+     * Update user role.
+     */
+    public function updateUserRole(Request $request, $id): JsonResponse
+    {
+        // Validate request
+        $validated = $request->validate([
+            'role' => ['required', Rule::in(array_column(UserRole::cases(), 'value'))]
+        ]);
+
+        // Find the user
+        $user = User::find($id);
+
+        if (!$user) {
+            return response()->json([
+                'message' => 'User not found'
+            ], 404);
+        }
+
+        // Update role
+        $user->role = $validated['role'];
+        $user->save();
+
+        return response()->json([
+            'message' => 'User role updated successfully',
+            'user' => $user
+        ], 200);
+    }
+
+    /**
      * Remove the specified resource from storage.
      */
     public function destroy(User $user)
