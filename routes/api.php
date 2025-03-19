@@ -13,8 +13,8 @@ use Illuminate\Support\Facades\Route;
 Route::prefix('v1/')->group(function () {
     Route::middleware([BasicAuthMiddleware::class, AdminMiddleware::class])->prefix('admin')->group(function () {
         Route::apiResource('users', UsersController::class);
+        Route::post('register', [AuthController::class, 'register']);
     });
-    Route::post('register', [AuthController::class, 'register']);
 });
 
 Route::middleware(BasicAuthMiddleware::class)->get('/user', function () {
