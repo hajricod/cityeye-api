@@ -70,15 +70,14 @@ class UsersController extends Controller
     {
         // Validate request
         $validated = $request->validate([
-            'role' => ['required', Rule::in(array_column(UserRole::cases(), 'value'))]
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|unique:users,email,' . $user->id,
         ]);
 
-        // Update role
-        $user->role = $validated['role'];
-        $user->save();
+        $user->update($validated);
 
         return response()->json([
-            'message' => 'User role updated successfully',
+            'message' => 'User updated successfully',
             'user' => $user
         ], 200);
     }
