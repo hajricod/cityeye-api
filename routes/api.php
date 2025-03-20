@@ -18,6 +18,7 @@ Route::prefix('v1')->group(function () {
             Route::apiResource('users', UsersController::class);
             Route::post('register', [AuthController::class, 'register']);
             Route::put('/users/{id}/role', [UsersController::class, 'updateUserRole']);
+            Route::put('/users/{id}/auth_level', [UsersController::class, 'updateUserAuthLevel']);
         });
 
     });
