@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\ReportsController;
 use App\Http\Controllers\Api\V1\UsersController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\BasicAuthMiddleware;
@@ -15,6 +16,7 @@ Route::prefix('v1')->group(function () {
     Route::middleware(BasicAuthMiddleware::class)->group(function () {
 
         Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
+            Route::apiResource('reports', ReportsController::class);
             Route::apiResource('users', UsersController::class);
             Route::post('register', [AuthController::class, 'register']);
             Route::put('/users/{id}/role', [UsersController::class, 'updateUserRole']);
