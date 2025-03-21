@@ -15,7 +15,7 @@ return new class extends Migration
     {
         Schema::create('reports', function (Blueprint $table) {
             $table->id();
-            $table->string('report_number')->unique();
+            $table->string('report_id')->unique();
             $table->foreignId('case_id')->nullable()->constrained('cases')->onDelete('set null');
 
             $table->string('name');
