@@ -21,9 +21,11 @@ return new class extends Migration
             $table->string('name');
             $table->string('email')->nullable();
             $table->string('civil_id')->nullable();
+            $table->string('city');
+            $table->string('area')->nullable();
             $table->text('description', 1000);
             $table->enum('role', array_column(UserRole::cases(), 'value'))->default(UserRole::Citizen);
-            $table->enum('report_status', array_column(CaseStatus::cases(), 'value'))->default(CaseStatus::Pending);
+            $table->enum('status', array_column(CaseStatus::cases(), 'value'))->default(CaseStatus::Pending);
 
             $table->timestamps();
         });

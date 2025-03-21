@@ -13,10 +13,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::prefix('v1')->group(function () {
 
+    Route::post('report-crime', [ReportsController::class, 'store']);
+    Route::get('report-status/{report_id}', [ReportsController::class, 'status']);
+
     Route::middleware(BasicAuthMiddleware::class)->group(function () {
 
         Route::middleware(AdminMiddleware::class)->prefix('admin')->group(function () {
-            Route::apiResource('reports', ReportsController::class);
+            Route::apiResource('reports', ReportsController::class)->except(['store']);
             Route::apiResource('users', UsersController::class);
             Route::post('register', [AuthController::class, 'register']);
             Route::put('/users/{id}/role', [UsersController::class, 'updateUserRole']);

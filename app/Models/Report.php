@@ -6,5 +6,10 @@ use Illuminate\Database\Eloquent\Model;
 
 class Report extends Model
 {
-    //
+    protected $guarded = [];
+
+    public function case()
+    {
+        return $this->belongsTo(Cases::class);
+    }
 }
