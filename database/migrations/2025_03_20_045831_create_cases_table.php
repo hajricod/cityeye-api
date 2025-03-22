@@ -22,7 +22,7 @@ return new class extends Migration
             $table->id();
             $table->string('case_number')->unique();
             $table->string('case_name', 255);
-            $table->text('description', 500)->nullable();
+            $table->text('description')->nullable();
             $table->string('area', 255)->nullable();
             $table->string('city', 255)->nullable();
             $table->enum('case_type', array_column(CaseType::cases(), 'value'))->default(CaseType::Criminal);

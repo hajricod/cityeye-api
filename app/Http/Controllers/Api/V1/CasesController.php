@@ -17,10 +17,39 @@ class CasesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(Cases $case)
+    public function index(Request $request)
     {
-        $cases = $case->orderBy('created_at', 'desc')->get();
-        return response()->json($cases, 200);
+        $search = $request->query('search');
+
+        $query = Cases::with('creator:id,name')
+            ->orderBy('created_at', 'desc');
+
+        if ($search) {
+            $query->where(function ($q) use ($search) {
+                $q->where('case_name', 'ILIKE', "%{$search}%")
+                  ->orWhere('description', 'ILIKE', "%{$search}%");
+            });
+        }
+
+        $cases = $query->get();
+
+        $formattedCases = $cases->map(function ($case) {
+            return [
+                'case_number' => $case->case_number,
+                'case_name' => $case->case_name,
+                'description' => $this->truncateDescription($case->description),
+                'area' => $case->area,
+                'city' => $case->city,
+                'created_by' => $case->creator->name ?? 'N/A',
+                'created_at' => $case->created_at->toDateTimeString(),
+                'case_type' => $case->case_type,
+                'authorization_level' => $case->authorization_level,
+            ];
+        });
+
+
+        return response()->json($formattedCases,200);
+
     }
 
     /**
@@ -30,7 +59,7 @@ class CasesController extends Controller
     {
         $validated = $request->validate([
             'case_name' => 'required|string|max:255',
-            'description' => 'nullable|string|max:500',
+            'description' => 'nullable|string',
             'area' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
             'case_type' => ['required', Rule::in(array_column(CaseType::cases(), 'value'))],
@@ -67,9 +96,56 @@ class CasesController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Cases $cases)
+    public function show(Cases $case)
     {
-        //
+        $case->load([
+            'creator:id,name,email',
+            'reports:id,name,email,civil_id,role,case_id',
+            'assignees:id,name,role',
+            'persons:id,case_id,type'
+        ]);
+
+        $case->loadCount([
+            'assignees as assignee_count',
+            'evidences as evidence_count',
+            'persons as suspect_count' => function ($q) {
+                $q->where('type', 'suspect');
+            },
+            'persons as victim_count' => function ($q) {
+                $q->where('type', 'victim');
+            },
+            'persons as witness_count' => function ($q) {
+                $q->where('type', 'witness');
+            },
+        ]);
+
+        $reporter = $case->reports->first(); // First reporter (or null)
+
+        $response = [
+            'case_number' => $case->case_number,
+            'case_name' => $case->case_name,
+            'description' => $case->description,
+            'area' => $case->area,
+            'city' => $case->city,
+            'created_by' => $case->creator->name ?? 'N/A',
+            'created_at' => $case->created_at->toDateTimeString(),
+            'case_type' => $case->case_type,
+            'case_level' => $case->authorization_level, // assuming case_level = authorization_level
+            'authorization_level' => $case->authorization_level,
+            'reported_by' => $reporter ? [
+                'name' => $reporter->name,
+                'email' => $reporter->email,
+                'civil_id' => $reporter->civil_id,
+                'role' => $reporter->role,
+            ] : null,
+            'number_of_assignees' => $case->assignee_count,
+            'number_of_evidences' => $case->evidence_count,
+            'number_of_suspects' => $case->suspect_count,
+            'number_of_victims' => $case->victim_count,
+            'number_of_witnesses' => $case->witness_count,
+        ];
+
+        return response()->json($response, 200);
     }
 
     /**
@@ -80,7 +156,7 @@ class CasesController extends Controller
 
         $validated = $request->validate([
             'case_name' => 'sometimes|string|max:255',
-            'description' => 'nullable|string|max:500',
+            'description' => 'nullable|string',
             'area' => 'nullable|string|max:255',
             'city' => 'nullable|string|max:255',
             'case_type' => ['sometimes', Rule::in(array_column(CaseType::cases(), 'value'))],
@@ -111,5 +187,22 @@ class CasesController extends Controller
     public function destroy(Cases $cases)
     {
         //
+    }
+
+    function truncateDescription(string $text, int $limit = 100): string
+    {
+        if (strlen($text) <= $limit) {
+            return $text;
+        }
+
+        // Truncate safely without cutting a word
+        $truncated = substr($text, 0, $limit);
+
+        // Remove partial word at the end
+        if (substr($text, $limit, 1) !== ' ') {
+            $truncated = preg_replace('/\s+\S*$/', '', $truncated);
+        }
+
+        return $truncated . ' ...';
     }
 }
