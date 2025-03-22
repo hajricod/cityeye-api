@@ -29,6 +29,11 @@ Route::prefix('v1')->group(function () {
 
         Route::middleware([CheckRoleMiddleware::class . ':admin,investigator'])->group(function () {
             Route::apiResource('cases', CasesController::class);
+            Route::get('/cases/{case}/assignees', [CasesController::class, 'assignees']);
+            Route::get('/cases/{case}/evidences', [CasesController::class, 'evidences']);
+            Route::get('/cases/{case}/suspects', [CasesController::class, 'suspects']);
+            Route::get('/cases/{case}/victims', [CasesController::class, 'victims']);
+            Route::get('/cases/{case}/witnesses', [CasesController::class, 'witnesses']);
         });
 
     });
