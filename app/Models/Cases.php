@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 
 class Cases extends Model
 {
+    protected $guarded = [];
+
     /**
      * Get the attributes that should be cast.
      *

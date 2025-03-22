@@ -1,10 +1,13 @@
 <?php
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\CasesController;
 use App\Http\Controllers\Api\V1\ReportsController;
 use App\Http\Controllers\Api\V1\UsersController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\BasicAuthMiddleware;
+use App\Http\Middleware\CheckRoleMiddleware;
+use App\Http\Middleware\InvestigatorMiddleware;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
@@ -24,6 +27,12 @@ Route::prefix('v1')->group(function () {
             Route::post('register', [AuthController::class, 'register']);
             Route::put('/users/{id}/role', [UsersController::class, 'updateUserRole']);
             Route::put('/users/{id}/auth_level', [UsersController::class, 'updateUserAuthLevel']);
+        });
+
+        Route::middleware([
+            CheckRoleMiddleware::class . ':admin,investigator'
+        ])->group(function () {
+            Route::apiResource('cases', CasesController::class);
         });
 
     });
