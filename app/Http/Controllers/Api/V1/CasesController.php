@@ -17,9 +17,10 @@ class CasesController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Cases $case)
     {
-        //
+        $cases = $case->orderBy('created_at', 'desc')->get();
+        return response()->json($cases, 200);
     }
 
     /**
