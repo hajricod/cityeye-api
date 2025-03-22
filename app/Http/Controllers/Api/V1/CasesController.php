@@ -189,6 +189,45 @@ class CasesController extends Controller
         //
     }
 
+    public function assignees(Cases $case)
+    {
+        $assignees = $case->assignees()->select('user_id', 'name', 'email', 'role', 'authorization_level', 'case_assignees.created_at', 'case_assignees.updated_at')->get();
+
+        foreach ($assignees as $assignee) {
+            unset($assignee['pivot']);
+        }
+
+        return response()->json(['assignees' => $assignees], 200);
+    }
+
+    public function evidences(Cases $case)
+    {
+        $evidences = $case->evidences()->select('id', 'type', 'description', 'file_path', 'uploaded_by')->get();
+
+        return response()->json(['evidences' => $evidences], 200);
+    }
+
+    public function suspects(Cases $case)
+    {
+        $suspects = $case->persons()->where('type', 'suspect')->select('id', 'name', 'age', 'gender', 'role')->get();
+
+        return response()->json(['suspects' => $suspects], 200);
+    }
+
+    public function victims(Cases $case)
+    {
+        $victims = $case->persons()->where('type', 'victim')->select('id', 'name', 'age', 'gender', 'role')->get();
+
+        return response()->json(['victims' => $victims], 200);
+    }
+
+    public function witnesses(Cases $case)
+    {
+        $witnesses = $case->persons()->where('type', 'witness')->select('id', 'name', 'age', 'gender', 'role')->get();
+
+        return response()->json(['witnesses' => $witnesses], 200);
+    }
+
     function truncateDescription(string $text, int $limit = 100): string
     {
         if (strlen($text) <= $limit) {
