@@ -119,8 +119,6 @@ class CasesController extends Controller
             },
         ]);
 
-        $reporter = $case->reports->first(); // First reporter (or null)
-
         $response = [
             'case_number' => $case->case_number,
             'case_name' => $case->case_name,
@@ -131,13 +129,15 @@ class CasesController extends Controller
             'created_at' => $case->created_at->toDateTimeString(),
             'case_type' => $case->case_type,
             'case_level' => $case->authorization_level, // assuming case_level = authorization_level
-            'authorization_level' => $case->authorization_level,
-            'reported_by' => $reporter ? [
-                'name' => $reporter->name,
-                'email' => $reporter->email,
-                'civil_id' => $reporter->civil_id,
-                'role' => $reporter->role,
-            ] : null,
+            'authorization_level' => $case->reports->map(function ($report) {
+                return [
+                    'report_id' => $report->id,
+                    'name' => $report->name,
+                    'email' => $report->email,
+                    'civil_id' => $report->civil_id,
+                    'role' => $report->role,
+                ];
+            }),
             'number_of_assignees' => $case->assignee_count,
             'number_of_evidences' => $case->evidence_count,
             'number_of_suspects' => $case->suspect_count,
