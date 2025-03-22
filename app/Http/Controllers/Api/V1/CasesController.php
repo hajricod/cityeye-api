@@ -74,9 +74,34 @@ class CasesController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, Cases $cases)
+    public function update(Request $request, Cases $case)
     {
-        //
+
+        $validated = $request->validate([
+            'case_name' => 'sometimes|string|max:255',
+            'description' => 'nullable|string|max:500',
+            'area' => 'nullable|string|max:255',
+            'city' => 'nullable|string|max:255',
+            'case_type' => ['sometimes', Rule::in(array_column(CaseType::cases(), 'value'))],
+            'authorization_level' => ['sometimes', Rule::in(array_column(AuthorizationLevel::cases(), 'value'))],
+            'report_ids' => 'nullable|array',
+            'report_ids.*' => 'exists:reports,id',
+        ]);
+
+        if (!empty($validated['report_ids'])) {
+            Report::whereIn('id', $validated['report_ids'])
+                ->update(['case_id' => $case->id]);
+        }
+
+        unset($validated['report_ids']);
+
+        $case->update($validated);
+
+        return response()->json([
+            'message' => 'Case updated successfully',
+            'case' => $case
+        ]);
+
     }
 
     /**
