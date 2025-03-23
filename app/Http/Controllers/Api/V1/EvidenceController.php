@@ -193,15 +193,19 @@ class EvidenceController extends Controller
         return response()->json(['message' => 'Evidence soft-deleted successfully']);
     }
 
-    public function confirmDelete(Evidence $evidence)
+    public function confirmDelete($id)
     {
+        $evidence = Evidence::withTrashed()->findOrFail($id);
+
         return response()->json([
             'message' => "Are you sure you want to permanently delete Evidence ID: {$evidence->id}? (yes/no)"
         ]);
     }
 
-    public function hardDelete(Request $request, Evidence $evidence)
+    public function hardDelete(Request $request, $id)
     {
+        $evidence = Evidence::withTrashed()->findOrFail($id);
+
         $user = Auth::user();
 
         // Check 'confirm' input

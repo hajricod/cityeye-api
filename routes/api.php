@@ -44,9 +44,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/evidences/{evidence}/image', [EvidenceController::class, 'getImage']);
             Route::put('/evidences/{evidence}', [EvidenceController::class, 'update']);
 
-            Route::delete('/evidences/{evidence}', [EvidenceController::class, 'destroy']);
+            Route::delete('/evidences/{evidence}/soft-delete', [EvidenceController::class, 'destroy']);
             Route::get('/evidences/{evidence}/confirm-delete', [EvidenceController::class, 'confirmDelete']);
-            Route::delete('/evidences/{evidence}', [EvidenceController::class, 'hardDelete']);
+            Route::delete('/evidences/{evidence}/hard-delete', [EvidenceController::class, 'hardDelete']);
         });
 
 
