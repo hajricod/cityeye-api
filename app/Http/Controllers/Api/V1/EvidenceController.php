@@ -187,7 +187,7 @@ class EvidenceController extends Controller
         AuditLog::create([
             'user_id' => $user->id,
             'action' => 'deleted_evidence',
-            'description' => "Evidence ID {$evidence->id} soft-deleted by {$user->name} ({$user->role})"
+            'description' => "Evidence ID {$evidence->id} soft-deleted by {$user->name} ({$user->role->value})"
         ]);
 
         return response()->json(['message' => 'Evidence soft-deleted successfully']);
