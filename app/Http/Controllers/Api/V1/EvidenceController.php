@@ -67,7 +67,35 @@ class EvidenceController extends Controller
      */
     public function show(Evidence $evidence)
     {
-        //
+        $response = [
+            'id' => $evidence->id,
+            'case_id' => $evidence->case_id,
+            'type' => $evidence->type,
+            'description' => $evidence->description,
+            'remarks' => $evidence->remarks,
+            'uploaded_by' => $evidence->uploaded_by,
+            'created_at' => $evidence->created_at->toDateTimeString(),
+            'file_path' => $evidence->file_path,
+        ];
+
+        if ($evidence->type === 'image' && $evidence->file_path && Storage::disk('public')->exists($evidence->file_path)) {
+            $sizeInBytes = Storage::disk('public')->size($evidence->file_path);
+            $sizeFormatted = $this->formatFileSize($sizeInBytes);
+            $response['image_size'] = $sizeFormatted;
+        }
+
+        return response()->json(['evidence' => $response]);
+    }
+
+    private function formatFileSize($bytes)
+    {
+        if ($bytes >= 1048576) {
+            return round($bytes / 1048576, 2) . ' MB';
+        } elseif ($bytes >= 1024) {
+            return round($bytes / 1024, 2) . ' KB';
+        } else {
+            return $bytes . ' bytes';
+        }
     }
 
     /**
