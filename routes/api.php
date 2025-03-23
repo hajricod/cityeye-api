@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\CasesController;
+use App\Http\Controllers\Api\V1\EvidenceController;
 use App\Http\Controllers\Api\V1\ReportsController;
 use App\Http\Controllers\Api\V1\UsersController;
 use App\Http\Middleware\BasicAuthMiddleware;
@@ -35,6 +36,11 @@ Route::prefix('v1')->group(function () {
             Route::get('/cases/{case}/victims', [CasesController::class, 'victims']);
             Route::get('/cases/{case}/witnesses', [CasesController::class, 'witnesses']);
         });
+
+        Route::middleware([CheckRoleMiddleware::class . ':admin,investigator,officer'])->group(function () {
+            Route::post('/cases/{case}/evidences', [EvidenceController::class, 'store']);
+        });
+
 
     });
 });
