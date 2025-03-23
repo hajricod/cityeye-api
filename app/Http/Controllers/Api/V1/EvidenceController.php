@@ -7,6 +7,7 @@ use App\Models\Cases;
 use App\Models\Evidence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 
 class EvidenceController extends Controller
 {
@@ -91,5 +92,18 @@ class EvidenceController extends Controller
     public function destroy(Evidence $evidence)
     {
         //
+    }
+
+    public function download(Evidence $evidence)
+    {
+        if ($evidence->type !== 'image' || !$evidence->file_path) {
+            return response()->json(['message' => 'No image available for this evidence.'], 404);
+        }
+
+        if (!Storage::disk('public')->exists($evidence->file_path)) {
+            return response()->json(['message' => 'File not found.'], 404);
+        }
+
+        return response()->file(storage_path('app/public/' . $evidence->file_path));
     }
 }

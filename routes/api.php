@@ -39,6 +39,7 @@ Route::prefix('v1')->group(function () {
 
         Route::middleware([CheckRoleMiddleware::class . ':admin,investigator,officer'])->group(function () {
             Route::post('/cases/{case}/evidences', [EvidenceController::class, 'store']);
+            Route::get('/evidences/{evidence}/file', [EvidenceController::class, 'download']);
         });
 
 
