@@ -193,6 +193,44 @@ class EvidenceController extends Controller
         return response()->json(['message' => 'Evidence soft-deleted successfully']);
     }
 
+    public function confirmDelete(Evidence $evidence)
+    {
+        return response()->json([
+            'message' => "Are you sure you want to permanently delete Evidence ID: {$evidence->id}? (yes/no)"
+        ]);
+    }
+
+    public function hardDelete(Request $request, Evidence $evidence)
+    {
+        $user = Auth::user();
+
+        // Check 'confirm' input
+        $confirm = strtolower($request->input('confirm'));
+
+        if ($confirm !== 'yes') {
+            return response()->json([
+                'message' => "Deletion canceled. Send 'confirm: yes' to permanently delete Evidence ID: {$evidence->id}."
+            ], 400);
+        }
+
+        // Delete associated file if it's an image
+        if ($evidence->type === 'image' && $evidence->file_path && Storage::disk('public')->exists($evidence->file_path)) {
+            Storage::disk('public')->delete($evidence->file_path);
+        }
+
+        // Log the hard delete action
+        AuditLog::create([
+            'user_id' => $user->id,
+            'action' => 'hard_deleted_evidence',
+            'description' => "Evidence ID {$evidence->id} permanently deleted by {$user->name} ({$user->role->value})"
+        ]);
+
+        // Permanently delete the evidence "Hard delete"
+        $evidence->forceDelete();
+
+        return response()->json(['message' => "Evidence ID {$evidence->id} permanently deleted."]);
+    }
+
     public function download(Evidence $evidence)
     {
         if ($evidence->type !== 'image' || !$evidence->file_path) {
