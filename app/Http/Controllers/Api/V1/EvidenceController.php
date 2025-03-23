@@ -73,7 +73,7 @@ class EvidenceController extends Controller
             'type' => $evidence->type,
             'description' => $evidence->description,
             'remarks' => $evidence->remarks,
-            'uploaded_by' => $evidence->uploaded_by,
+            'uploaded_by' => $evidence->uploader->name ?? 'N/A',
             'created_at' => $evidence->created_at->toDateTimeString(),
             'file_path' => $evidence->file_path,
         ];
@@ -98,6 +98,28 @@ class EvidenceController extends Controller
         }
     }
 
+    public function getImage(Evidence $evidence)
+    {
+        // Check if evidence is of type 'image'
+        if ($evidence->type !== 'image') {
+            return response()->json(['message' => 'This evidence is not an image.'], 400);
+        }
+
+        // Check if image exists
+        if (!$evidence->file_path || !Storage::disk('public')->exists($evidence->file_path)) {
+            return response()->json(['message' => 'Image file not found.'], 404);
+        }
+
+        // Return the image file
+        $filePath = storage_path('app/public/' . $evidence->file_path);
+        $mimeType = mime_content_type($filePath);
+
+        return response()->file($filePath, [
+            'Content-Type' => $mimeType,
+            'Content-Disposition' => 'inline; filename="' . basename($filePath) . '"',
+        ]);
+    }
+
     /**
      * Show the form for editing the specified resource.
      */
@@ -111,7 +133,44 @@ class EvidenceController extends Controller
      */
     public function update(Request $request, Evidence $evidence)
     {
-        //
+        // Detect evidence type
+        $type = $evidence->type;
+
+        // Validate based on type
+        if ($type === 'text') {
+            $validated = $request->validate([
+                'description' => 'required|string|max:1000',
+                'remarks' => 'nullable|string|max:1000',
+            ]);
+
+            $evidence->description = $validated['description'];
+            $evidence->remarks = $validated['remarks'] ?? $evidence->remarks;
+
+        } elseif ($type === 'image') {
+            $validated = $request->validate([
+                'image' => 'required|image|mimes:jpeg,png,jpg,gif|max:5120', // 5MB
+                'remarks' => 'nullable|string|max:1000',
+            ]);
+
+            // Delete old image if it exists
+            if ($evidence->file_path && Storage::disk('public')->exists($evidence->file_path)) {
+                Storage::disk('public')->delete($evidence->file_path);
+            }
+
+            // Store new image
+            $newPath = $request->file('image')->store('evidences', 'public');
+            $evidence->file_path = $newPath;
+            $evidence->remarks = $validated['remarks'] ?? $evidence->remarks;
+        } else {
+            return response()->json(['message' => 'Invalid evidence type.'], 400);
+        }
+
+        $evidence->save();
+
+        return response()->json([
+            'message' => 'Evidence updated successfully',
+            'evidence' => $evidence
+        ]);
     }
 
     /**

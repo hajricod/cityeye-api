@@ -41,6 +41,8 @@ Route::prefix('v1')->group(function () {
             Route::post('/cases/{case}/evidences', [EvidenceController::class, 'store']);
             Route::get('/evidences/{evidence}/file', [EvidenceController::class, 'download']);
             Route::get('/evidences/{evidence}', [EvidenceController::class, 'show']);
+            Route::get('/evidences/{evidence}/image', [EvidenceController::class, 'getImage']);
+            Route::put('/evidences/{evidence}', [EvidenceController::class, 'update']);
         });
 
 
