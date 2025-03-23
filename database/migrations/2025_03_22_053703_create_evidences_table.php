@@ -20,6 +20,7 @@ return new class extends Migration
             $table->string('file_path')->nullable();
             $table->text('remarks')->nullable();
             $table->foreignId('uploaded_by')->constrained('users')->onDelete('cascade');
+            $table->softDeletes();
             $table->timestamps();
         });
     }
