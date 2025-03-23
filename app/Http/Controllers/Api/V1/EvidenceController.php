@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Models\AuditLog;
 use App\Models\Cases;
 use App\Models\Evidence;
 use Illuminate\Http\Request;
@@ -178,7 +179,18 @@ class EvidenceController extends Controller
      */
     public function destroy(Evidence $evidence)
     {
-        //
+        $user = Auth::user();
+
+        $evidence->delete(); // Soft delete
+
+        // Insert audit log
+        AuditLog::create([
+            'user_id' => $user->id,
+            'action' => 'deleted_evidence',
+            'description' => "Evidence ID {$evidence->id} soft-deleted by {$user->name} ({$user->role})"
+        ]);
+
+        return response()->json(['message' => 'Evidence soft-deleted successfully']);
     }
 
     public function download(Evidence $evidence)
