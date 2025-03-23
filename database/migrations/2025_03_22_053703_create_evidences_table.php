@@ -18,6 +18,7 @@ return new class extends Migration
             $table->enum('type', array_column(EvidenceType::cases(), 'value'))->nullable();
             $table->text('description')->nullable();
             $table->string('file_path')->nullable();
+            $table->text('remarks')->nullable();
             $table->foreignId('uploaded_by')->constrained('users')->onDelete('cascade');
             $table->timestamps();
         });
