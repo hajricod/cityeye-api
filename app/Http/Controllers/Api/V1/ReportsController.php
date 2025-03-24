@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\CaseStatus;
-use App\Enums\CaseType;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Cases;
@@ -129,6 +128,14 @@ class ReportsController extends Controller
      */
     public function destroy(Report $report)
     {
-        //
+        if (!$report) {
+            return response()->json(['message' => 'Report not found'], 404);
+        }
+
+        $report->delete();
+
+        return response()->json([
+            'message' => 'Report deleted successfully.'
+        ]);
     }
 }
