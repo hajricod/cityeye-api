@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
+use App\Models\Cases;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
@@ -61,6 +62,27 @@ class ReportsController extends Controller
         return response()->json([
             'report_id' => $report->report_id,
             'status' => $report->status,
+        ]);
+    }
+
+    public function getReportStatus($report_id)
+    {
+        $report = Report::find($report_id);
+        if (!$report) {
+            return response()->json(['message' => 'Report not found'], 404);
+        }
+
+        $case = Cases::find($report->case_id);
+        if (!$case) {
+            return response()->json(['message' => 'Case not yet assigned to this report'], 404);
+        }
+
+        return response()->json([
+            'report_id' => $report->id,
+            'case_number' => $case->case_number,
+            'case_name' => $case->case_name,
+            'status' => $case->case_status, // e.g., pending, ongoing, closed
+            'last_updated' => $case->updated_at->toDateTimeString(),
         ]);
     }
 

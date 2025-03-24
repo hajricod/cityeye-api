@@ -19,6 +19,7 @@ Route::prefix('v1')->group(function () {
 
     Route::post('report-crime', [ReportsController::class, 'store']);
     Route::get('report-status/{report_id}', [ReportsController::class, 'status']);
+    Route::get('/reports/{report_id}/status', [ReportsController::class, 'getReportStatus']);
 
     Route::middleware(BasicAuthMiddleware::class)->group(function () {
 
