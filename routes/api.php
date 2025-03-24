@@ -39,6 +39,11 @@ Route::prefix('v1')->group(function () {
             Route::get('/cases/{case}/victims', [CasesController::class, 'victims']);
             Route::get('/cases/{case}/witnesses', [CasesController::class, 'witnesses']);
             Route::get('/evidences/text-analysis', [EvidenceController::class, 'textAnalysis']);
+            Route::delete('/evidences/{evidence}/soft-delete', [EvidenceController::class, 'destroy']);
+
+            Route::put('/evidences/{evidence}', [EvidenceController::class, 'update']);
+            Route::get('/evidences/{evidence}/confirm-delete', [EvidenceController::class, 'confirmDelete']);
+            Route::delete('/evidences/{evidence}/hard-delete', [EvidenceController::class, 'hardDelete']);
             Route::get('/cases/{id}/report', [CasesController::class, 'generatePdfReport']);
         });
 
@@ -47,11 +52,6 @@ Route::prefix('v1')->group(function () {
             Route::get('/evidences/{evidence}/file', [EvidenceController::class, 'download']);
             Route::get('/evidences/{evidence}', [EvidenceController::class, 'show']);
             Route::get('/evidences/{evidence}/image', [EvidenceController::class, 'getImage']);
-            Route::put('/evidences/{evidence}', [EvidenceController::class, 'update']);
-
-            Route::delete('/evidences/{evidence}/soft-delete', [EvidenceController::class, 'destroy']);
-            Route::get('/evidences/{evidence}/confirm-delete', [EvidenceController::class, 'confirmDelete']);
-            Route::delete('/evidences/{evidence}/hard-delete', [EvidenceController::class, 'hardDelete']);
             Route::get('/cases/{id}/links', [CasesController::class, 'extractLinks']);
         });
 
