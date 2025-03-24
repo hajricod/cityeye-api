@@ -247,4 +247,52 @@ class EvidenceController extends Controller
 
         return response()->file(storage_path('app/public/' . $evidence->file_path));
     }
+
+    public function textAnalysis()
+    {
+        // Get all text-based evidence descriptions
+        $texts = Evidence::where('type', 'text')
+            ->whereNotNull('description')
+            ->pluck('description')
+            ->implode(' '); // Combine all text into one string
+
+        if (empty($texts)) {
+            return response()->json(['message' => 'No text evidence available.'], 404);
+        }
+
+        // Normalize text: lowercase + remove punctuation
+        $normalized = strtolower($texts);
+        $normalized = preg_replace('/[^\w\s]/', '', $normalized); // Remove punctuation
+
+        // Split into words
+        $words = explode(' ', $normalized);
+
+        // Define stop words
+        $stopWords = [
+            'the', 'and', 'to', 'of', 'in', 'for', 'on', 'at', 'with',
+            'by', 'an', 'is', 'a', 'from', 'as', 'that', 'this', 'was', 'were',
+            'are', 'be', 'or', 'it', 'has', 'had', 'have', 'not', 'but', 'we'
+        ];
+
+        // Count words, ignoring stop words
+        $wordCounts = [];
+        foreach ($words as $word) {
+            $word = trim($word);
+            if ($word === '' || in_array($word, $stopWords)) {
+                continue;
+            }
+
+            $wordCounts[$word] = ($wordCounts[$word] ?? 0) + 1;
+        }
+
+        // Sort by frequency, descending
+        arsort($wordCounts);
+
+        // Get top 10
+        $topWords = array_slice($wordCounts, 0, 10, true);
+
+        return response()->json([
+            'top_words' => $topWords
+        ]);
+    }
 }
