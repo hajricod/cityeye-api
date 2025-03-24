@@ -188,9 +188,19 @@ class CasesController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(Cases $cases)
+    public function destroy($id)
     {
-        //
+        $case = Cases::find($id);
+        if (!$case) {
+            return response()->json(['message' => 'Case not found'], 404);
+        }
+
+        // Delete the case (also delete related data if needed)
+        $case->delete();
+
+        return response()->json([
+            'message' => 'Case deleted successfully.'
+        ]);
     }
 
     public function assignees(Cases $case)
@@ -259,7 +269,6 @@ class CasesController extends Controller
 
         $textSources = [];
 
-        // ✅ Add only case fields where links might appear
         if ($case->description) {
             $textSources[] = $case->description;
         }
