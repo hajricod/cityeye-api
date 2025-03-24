@@ -3,10 +3,13 @@
 namespace App\Models;
 
 use App\Enums\CaseType;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Cases extends Model
 {
+    use HasFactory;
+
     protected $guarded = [];
 
     public function creator()

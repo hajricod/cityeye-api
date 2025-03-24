@@ -2,7 +2,9 @@
 
 namespace Database\Seeders;
 
+use App\Enums\AuthorizationLevel;
 use App\Enums\UserRole;
+use App\Models\Cases;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -27,5 +29,7 @@ class DatabaseSeeder extends Seeder
         ]);
 
         User::factory(100)->create();
+
+        Cases::factory(50)->create();
     }
 }
