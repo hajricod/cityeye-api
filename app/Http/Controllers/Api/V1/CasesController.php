@@ -130,7 +130,7 @@ class CasesController extends Controller
             'created_at' => $case->created_at->toDateTimeString(),
             'case_type' => $case->case_type,
             'case_level' => $case->authorization_level, // assuming case_level = authorization_level
-            'authorization_level' => $case->reports->map(function ($report) {
+            'reported_by' => $case->reports->map(function ($report) {
                 return [
                     'report_id' => $report->id,
                     'name' => $report->name,
