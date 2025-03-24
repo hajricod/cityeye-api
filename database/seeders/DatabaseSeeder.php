@@ -2,11 +2,9 @@
 
 namespace Database\Seeders;
 
-use App\Enums\AuthorizationLevel;
 use App\Enums\UserRole;
 use App\Models\Cases;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Str;
@@ -34,6 +32,7 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             ReportSeeder::class,
+            EvidenceSeeder::class
         ]);
     }
 }
