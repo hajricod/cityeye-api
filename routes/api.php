@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuditLogsController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\CasePersonsController;
 use App\Http\Controllers\Api\V1\CasesController;
 use App\Http\Controllers\Api\V1\EvidenceController;
 use App\Http\Controllers\Api\V1\ReportsController;
@@ -45,6 +46,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/evidences/{evidence}/confirm-delete', [EvidenceController::class, 'confirmDelete']);
             Route::delete('/evidences/{evidence}/hard-delete', [EvidenceController::class, 'hardDelete']);
             Route::get('/cases/{id}/report', [CasesController::class, 'generatePdfReport']);
+
+            Route::get('/case-persons/{case}', [CasePersonsController::class, 'index']);
+            Route::get('/case-persons/{case}/{person}', [CasePersonsController::class, 'show']);
         });
 
         Route::middleware([CheckRoleMiddleware::class . ':admin,investigator,officer'])->group(function () {
