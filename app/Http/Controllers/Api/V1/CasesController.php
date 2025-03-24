@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\AuthorizationLevel;
 use App\Enums\CaseType;
 use App\Http\Controllers\Controller;
+use App\Models\CasePerson;
 use App\Models\Cases;
 use App\Models\Evidence;
 use App\Models\Report;
@@ -12,6 +13,7 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Str;
 use Illuminate\Validation\Rule;
+use Barryvdh\DomPDF\Facade\Pdf;
 
 class CasesController extends Controller
 {
@@ -283,5 +285,21 @@ class CasesController extends Controller
             'total_links_found' => count($links),
             'links' => array_values(array_unique($links))
         ]);
+    }
+
+    public function generatePdfReport($id)
+    {
+        $case = Cases::with('creator')->find($id);
+        if (!$case) {
+            return response()->json(['message' => 'Case not found'], 404);
+        }
+
+        $evidence = Evidence::where('case_id', $id)->get();
+        $suspects = CasePerson::where('case_id', $id)->where('type', 'suspect')->get();
+        $victims = CasePerson::where('case_id', $id)->where('type', 'victim')->get();
+        $witnesses = CasePerson::where('case_id', $id)->where('type', 'witness')->get();
+
+        $pdf = Pdf::loadView('pdf.case_report', compact('case', 'evidence', 'suspects', 'victims', 'witnesses'));
+        return $pdf->download("case_report_{$case->case_number}.pdf");
     }
 }

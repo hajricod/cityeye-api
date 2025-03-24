@@ -39,6 +39,7 @@ Route::prefix('v1')->group(function () {
             Route::get('/cases/{case}/victims', [CasesController::class, 'victims']);
             Route::get('/cases/{case}/witnesses', [CasesController::class, 'witnesses']);
             Route::get('/evidences/text-analysis', [EvidenceController::class, 'textAnalysis']);
+            Route::get('/cases/{id}/report', [CasesController::class, 'generatePdfReport']);
         });
 
         Route::middleware([CheckRoleMiddleware::class . ':admin,investigator,officer'])->group(function () {
