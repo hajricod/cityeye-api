@@ -28,9 +28,8 @@ class DatabaseSeeder extends Seeder
 
         User::factory(100)->create();
 
-        Cases::factory(50)->create();
-
         $this->call([
+            CasesSeeder::class,
             ReportSeeder::class,
             EvidenceSeeder::class
         ]);

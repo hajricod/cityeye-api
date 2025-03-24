@@ -26,7 +26,7 @@ class CasesSeeder extends Seeder
 
         $officers = User::where('role', 'officer')->get();
 
-        Cases::factory(10)->create()->each(function ($case) use ($officers, $rankMap) {
+        Cases::factory(50)->create()->each(function ($case) use ($officers, $rankMap) {
             $caseLevelValue = $case->authorization_level instanceof \BackedEnum
                 ? $case->authorization_level->value
                 : $case->authorization_level;
