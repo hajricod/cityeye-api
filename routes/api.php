@@ -48,6 +48,7 @@ Route::prefix('v1')->group(function () {
             Route::delete('/evidences/{evidence}/soft-delete', [EvidenceController::class, 'destroy']);
             Route::get('/evidences/{evidence}/confirm-delete', [EvidenceController::class, 'confirmDelete']);
             Route::delete('/evidences/{evidence}/hard-delete', [EvidenceController::class, 'hardDelete']);
+            Route::get('/cases/{id}/links', [CasesController::class, 'extractLinks']);
         });
 
 

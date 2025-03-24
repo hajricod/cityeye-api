@@ -6,6 +6,7 @@ use App\Enums\AuthorizationLevel;
 use App\Enums\CaseType;
 use App\Http\Controllers\Controller;
 use App\Models\Cases;
+use App\Models\Evidence;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -244,5 +245,43 @@ class CasesController extends Controller
         }
 
         return $truncated . ' ...';
+    }
+
+    public function extractLinks($id)
+    {
+        $case = Cases::find($id);
+
+        if (!$case) {
+            return response()->json(['message' => 'Case not found'], 404);
+        }
+
+        $textSources = [];
+
+        // ✅ Add only case fields where links might appear
+        if ($case->description) {
+            $textSources[] = $case->description;
+        }
+
+        if ($case->area) {
+            $textSources[] = $case->area;
+        }
+
+        if ($case->case_name) {
+            $textSources[] = $case->case_name;
+        }
+
+        // Combine all text from case
+        $combinedText = implode(' ', $textSources);
+
+        // Regex to match http(s) + www. links
+        preg_match_all('/\b((https?:\/\/)?www\.[^\s]+)\b/i', $combinedText, $matches);
+
+        $links = $matches[1] ?? [];
+
+        return response()->json([
+            'case_id' => $case->id,
+            'total_links_found' => count($links),
+            'links' => array_values(array_unique($links))
+        ]);
     }
 }
