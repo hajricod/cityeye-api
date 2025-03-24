@@ -2,12 +2,15 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\CaseStatus;
+use App\Enums\CaseType;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\Cases;
 use App\Models\Report;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
+use Illuminate\Validation\Rule;
 
 class ReportsController extends Controller
 {
@@ -16,7 +19,9 @@ class ReportsController extends Controller
      */
     public function index()
     {
-        //
+        $reports = Report::orderBy('created_at', 'desc')->get();
+
+        return response()->json(["reports" => $reports]);
     }
 
     /**
@@ -91,7 +96,7 @@ class ReportsController extends Controller
      */
     public function show(Report $report)
     {
-        //
+        return response()->json(["report" => $report]);
     }
 
     /**
@@ -99,7 +104,24 @@ class ReportsController extends Controller
      */
     public function update(Request $request, Report $report)
     {
-        //
+        if (!$report) {
+            return response()->json(['message' => 'Report not found'], 404);
+        }
+
+        $validated = $request->validate([
+            'name' => 'sometimes|string|max:255',
+            'email' => 'sometimes|email|max:255',
+            'civil_id' => 'sometimes|string|max:20',
+            'description' => 'nullable|string|max:1000',
+            'status' => ['sometimes', Rule::in(array_column(CaseStatus::cases(), 'value'))],
+        ]);
+
+        $report->update($validated);
+
+        return response()->json([
+            'message' => 'Report updated successfully',
+            'report' => $report
+        ]);
     }
 
     /**

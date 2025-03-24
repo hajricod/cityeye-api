@@ -8,7 +8,6 @@ use App\Http\Controllers\Api\V1\ReportsController;
 use App\Http\Controllers\Api\V1\UsersController;
 use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Middleware\CheckRoleMiddleware;
-use App\Models\Evidence;
 use Illuminate\Support\Facades\Route;
 
 // Route::get('/user', function (Request $request) {
