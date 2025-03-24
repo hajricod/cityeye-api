@@ -57,6 +57,8 @@ class EvidenceController extends Controller
 
         $evidence = Evidence::create($data);
 
+        $this->addAuditLog($evidence, 'added');
+
         return response()->json([
             'message' => 'Evidence recorded successfully',
             'evidence' => $evidence
@@ -168,6 +170,8 @@ class EvidenceController extends Controller
 
         $evidence->save();
 
+        $this->addAuditLog($evidence, 'updated');
+
         return response()->json([
             'message' => 'Evidence updated successfully',
             'evidence' => $evidence
@@ -179,16 +183,10 @@ class EvidenceController extends Controller
      */
     public function destroy(Evidence $evidence)
     {
-        $user = Auth::user();
 
         $evidence->delete(); // Soft delete
 
-        // Insert audit log
-        AuditLog::create([
-            'user_id' => $user->id,
-            'action' => 'deleted_evidence',
-            'description' => "Evidence ID {$evidence->id} soft-deleted by {$user->name} ({$user->role->value})"
-        ]);
+        $this->addAuditLog($evidence, 'soft-deleted');
 
         return response()->json(['message' => 'Evidence soft-deleted successfully']);
     }
@@ -293,6 +291,17 @@ class EvidenceController extends Controller
 
         return response()->json([
             'top_words' => $topWords
+        ]);
+    }
+
+    protected function addAuditLog(Evidence $evidence, String $action) {
+
+        $user = Auth::user();
+
+        AuditLog::create([
+            'user_id' => $user->id,
+            'action' => "{$action}_evidence",
+            'description' => "Evidence ID {$evidence->id} {$action} by {$user->name} ({$user->role->value})"
         ]);
     }
 }
