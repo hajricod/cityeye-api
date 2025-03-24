@@ -35,6 +35,7 @@ class CasesController extends Controller
 
         $formattedCases = $cases->map(function ($case) {
             return [
+                'id' => $case->id,
                 'case_number' => $case->case_number,
                 'case_name' => $case->case_name,
                 'description' => $this->truncateDescription($case->description),
