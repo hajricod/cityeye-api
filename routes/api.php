@@ -49,6 +49,7 @@ Route::prefix('v1')->group(function () {
 
             Route::get('/case-persons/{case}', [CasePersonsController::class, 'index']);
             Route::get('/case-persons/{case}/{person}', [CasePersonsController::class, 'show']);
+            Route::delete('/case-persons/{case}/{person}', [CasePersonsController::class, 'destroy']);
         });
 
         Route::middleware([CheckRoleMiddleware::class . ':admin,investigator,officer'])->group(function () {

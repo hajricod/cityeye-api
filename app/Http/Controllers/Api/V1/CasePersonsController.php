@@ -63,8 +63,16 @@ class CasePersonsController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(CasePerson $casePerson)
+    public function destroy($case_id, $person_id)
     {
-        //
+        $case_person = CasePerson::where(['case_id' => $case_id, "id" => $person_id])->first();
+
+        if (count($case_person) == 0) {
+            return response()->json(['message' => 'Case person not found'], 404);
+        }
+
+        $case_person->delete();
+
+        return response()->json(['message' => 'Case person deleted successfully']);
     }
 }
