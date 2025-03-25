@@ -35,7 +35,16 @@ class ReportsController extends Controller
             'description' => 'required|string|max:1000',
             'city' => 'required|string|max:255',
             'area' => 'nullable|string|max:255',
-        ]);
+            'role' => ['sometimes', Rule::in([
+                UserRole::Admin->value,
+                UserRole::Investigator->value,
+                UserRole::Citizen->value,
+            ])]
+        ],
+            [
+                'role.in' => 'The selected role must be one of: admin, investigator, or citizen.',
+            ]
+        );
 
         // Create report entry
         $data = $report->create([
@@ -43,7 +52,7 @@ class ReportsController extends Controller
             'email' => $validated['email'],
             'civil_id' => $validated['civil_id'],
             'report_id' => Str::upper(uniqid('REP-')),
-            'role' => UserRole::Citizen,
+            'role' => $validated['role'] ?? UserRole::Citizen,
             'description' => $validated['description'],
             'city' => $validated['city'],
             'area' => $validated['area'] ?? null,
