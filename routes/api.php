@@ -33,23 +33,31 @@ Route::prefix('v1')->group(function () {
         });
 
         Route::middleware([CheckRoleMiddleware::class . ':admin,investigator'])->group(function () {
-            Route::apiResource('cases', CasesController::class);
-            Route::get('/cases/{case}/assignees', [CasesController::class, 'assignees']);
-            Route::get('/cases/{case}/evidences', [CasesController::class, 'evidences']);
-            Route::get('/cases/{case}/suspects', [CasesController::class, 'suspects']);
-            Route::get('/cases/{case}/victims', [CasesController::class, 'victims']);
-            Route::get('/cases/{case}/witnesses', [CasesController::class, 'witnesses']);
-            Route::get('/evidences/text-analysis', [EvidenceController::class, 'textAnalysis']);
-            Route::delete('/evidences/{evidence}/soft-delete', [EvidenceController::class, 'destroy']);
 
-            Route::put('/evidences/{evidence}', [EvidenceController::class, 'update']);
-            Route::get('/evidences/{evidence}/confirm-delete', [EvidenceController::class, 'confirmDelete']);
-            Route::delete('/evidences/{evidence}/hard-delete', [EvidenceController::class, 'hardDelete']);
-            Route::get('/cases/{id}/report', [CasesController::class, 'generatePdfReport']);
+            Route::apiResource('/cases', CasesController::class);
+            Route::prefix('/cases')->group(function () {
+                Route::get('/{case}/assignees', [CasesController::class, 'assignees']);
+                Route::get('/{case}/evidences', [CasesController::class, 'evidences']);
+                Route::get('/{case}/suspects', [CasesController::class, 'suspects']);
+                Route::get('/{case}/victims', [CasesController::class, 'victims']);
+                Route::get('/{case}/witnesses', [CasesController::class, 'witnesses']);
+                Route::get('/{id}/report', [CasesController::class, 'generatePdfReport']);
+            });
 
-            Route::get('/case-persons/{case}', [CasePersonsController::class, 'index']);
-            Route::get('/case-persons/{case}/{person}', [CasePersonsController::class, 'show']);
-            Route::delete('/case-persons/{case}/{person}', [CasePersonsController::class, 'destroy']);
+            Route::prefix('/case-persons')->group(function () {
+                Route::get('/{case}', [CasePersonsController::class, 'index']);
+                Route::get('/{case}/{person}', [CasePersonsController::class, 'show']);
+                Route::delete('/{case}/{person}', [CasePersonsController::class, 'destroy']);
+            });
+
+
+            Route::prefix('/evidences')->group(function () {
+                Route::get('/text-analysis', [EvidenceController::class, 'textAnalysis']);
+                Route::put('/{evidence}', [EvidenceController::class, 'update']);
+                Route::delete('/{evidence}/soft-delete', [EvidenceController::class, 'destroy']);
+                Route::get('/{evidence}/confirm-delete', [EvidenceController::class, 'confirmDelete']);
+                Route::delete('/{evidence}/hard-delete', [EvidenceController::class, 'hardDelete']);
+            });
         });
 
         Route::middleware([CheckRoleMiddleware::class . ':admin,investigator,officer'])->group(function () {
