@@ -37,7 +37,7 @@ class CasePersonsController extends Controller
         $validated = $request->validate([
             'name' => 'required|string|max:255',
             'age' => 'required|integer|min:0',
-            'gender' => 'required|string|in:Male,Female,Other',
+            'gender' => ['required', Rule::in(array_column(Gender::cases(), 'value'))],
             'role' => 'nullable|string|max:255',
         ]);
 

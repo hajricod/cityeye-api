@@ -55,7 +55,7 @@ return new class extends Migration
             $table->string('name');
             $table->integer('age')->nullable();
             $table->enum('gender', array_column(Gender::cases(), 'value'));
-            $table->enum('role', array_column(CaseRole::cases(), 'value'));
+            $table->enum('role', array_column(CaseRole::cases(), 'value'))->nullable();
 
             $table->timestamps();
         });
