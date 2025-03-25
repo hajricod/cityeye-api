@@ -80,6 +80,7 @@ Route::prefix('v1')->group(function () {
 
         Route::middleware([CheckRoleMiddleware::class . ':officer'])->group(function () {
             Route::get('/officer/my-cases', [OfficerCasesController::class, 'index']);
+            Route::put('/officer/my-cases/{id}/status', [OfficerCasesController::class, 'updateStatus']);
         });
 
     });
