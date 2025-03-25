@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\CasePersonsController;
 use App\Http\Controllers\Api\V1\CasesController;
 use App\Http\Controllers\Api\V1\EvidenceController;
+use App\Http\Controllers\Api\V1\OfficerCasesController;
 use App\Http\Controllers\Api\V1\ReportsController;
 use App\Http\Controllers\Api\V1\UsersController;
 use App\Http\Middleware\BasicAuthMiddleware;
@@ -77,6 +78,9 @@ Route::prefix('v1')->group(function () {
             Route::get('/cases/{id}/links', [CasesController::class, 'extractLinks']);
         });
 
+        Route::middleware([CheckRoleMiddleware::class . ':officer'])->group(function () {
+            Route::get('/officer/my-cases', [OfficerCasesController::class, 'index']);
+        });
 
     });
 });

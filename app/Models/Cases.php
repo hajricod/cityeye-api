@@ -39,6 +39,16 @@ class Cases extends Model
         return $this->hasMany(Evidence::class, 'case_id');
     }
 
+    public function assignee()
+    {
+        return $this->hasMany(CaseAssignees::class, 'case_id');
+    }
+
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
     /**
      * Get the attributes that should be cast.
      *
