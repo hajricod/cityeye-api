@@ -44,10 +44,19 @@ Route::prefix('v1')->group(function () {
                 Route::get('/{id}/report', [CasesController::class, 'generatePdfReport']);
             });
 
-            Route::prefix('/case-persons')->group(function () {
-                Route::get('/{case}', [CasePersonsController::class, 'index']);
-                Route::get('/{case}/{person}', [CasePersonsController::class, 'show']);
-                Route::delete('/{case}/{person}', [CasePersonsController::class, 'destroy']);
+            // Route::prefix('/case-persons')->group(function () {
+            //     Route::get('/{case}', [CasePersonsController::class, 'index']);
+            //     Route::get('/{case}/{person}', [CasePersonsController::class, 'show']);
+            //     Route::delete('/{case}/{person}', [CasePersonsController::class, 'destroy']);
+            // });
+
+            Route::prefix('cases/{case}/persons')->group(function () {
+                Route::get('all', [CasePersonsController::class, 'allPersons']);
+                Route::get('{type}', [CasePersonsController::class, 'index']);
+                Route::post('{type}', [CasePersonsController::class, 'store']);
+                Route::get('{type}/{id}', [CasePersonsController::class, 'show']);
+                Route::put('{type}/{id}', [CasePersonsController::class, 'update']);
+                Route::delete('{type}/{id}', [CasePersonsController::class, 'destroy']);
             });
 
 

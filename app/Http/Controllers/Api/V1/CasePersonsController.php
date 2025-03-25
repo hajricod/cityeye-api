@@ -2,77 +2,87 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\CasePersonType;
+use App\Enums\Gender;
 use App\Http\Controllers\Controller;
-use App\Models\CasePerson;
+use App\Models\Cases;
 use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
 
 class CasePersonsController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index($id)
-    {
-        $case_persons = CasePerson::where('case_id', $id)->get();
 
-        if (count($case_persons) == 0) {
-            return response()->json(['message' => 'Case persons not found'], 404);
+    protected function validateType($type)
+    {
+        if (!in_array($type, array_column(CasePersonType::cases(), 'value'))) {
+            abort(400, 'Invalid person type');
         }
-
-        return response()->json(["persons" => $case_persons]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
+    public function allPersons(Cases $case)
     {
-        //
+        return response()->json($case->persons()->get());
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show($case_id, $person_id)
+    public function index(Cases $case, $type)
     {
-        $case_person = CasePerson::where(['case_id' => $case_id, "id" => $person_id])->get();
-
-        if (count($case_person) == 0) {
-            return response()->json(['message' => 'Case person not found'], 404);
-        }
-
-        return response()->json($case_person);
+        $this->validateType($type);
+        return response()->json($case->persons()->where('type', $type)->get());
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(CasePerson $casePerson)
+    public function store(Request $request, Cases $case, $type)
     {
-        //
+        $this->validateType($type);
+
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'age' => 'required|integer|min:0',
+            'gender' => 'required|string|in:Male,Female,Other',
+            'role' => 'nullable|string|max:255',
+        ]);
+
+        $person = $case->persons()->create(array_merge($validated, ['type' => $type]));
+
+        return response()->json($person, 201);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, CasePerson $casePerson)
+    public function show(Cases $case, $type, $id)
     {
-        //
+        $this->validateType($type);
+
+        $person = $case->persons()->where('type', $type)->findOrFail($id);
+
+        return response()->json($person);
     }
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($case_id, $person_id)
+    public function update(Request $request, Cases $case, $type, $id)
     {
-        $case_person = CasePerson::where(['case_id' => $case_id, "id" => $person_id])->first();
+        $this->validateType($type);
 
-        if (count($case_person) == 0) {
-            return response()->json(['message' => 'Case person not found'], 404);
-        }
+        $person = $case->persons()->where('type', $type)->findOrFail($id);
 
-        $case_person->delete();
+        $validated = $request->validate([
+            'name' => 'sometimes|required|string|max:255',
+            'age' => 'sometimes|required|integer|min:0',
+            'gender' => ['sometimes', Rule::in(array_column(Gender::cases(), 'value'))],
+            'role' => 'nullable|string|max:255',
+        ]);
 
-        return response()->json(['message' => 'Case person deleted successfully']);
+        $person->update($validated);
+
+        return response()->json([
+            'message' => ucfirst($type) . ' updated successfully.',
+            'data' => $person
+        ]);
+    }
+
+    public function destroy(Cases $case, $type, $id)
+    {
+        $this->validateType($type);
+
+        $person = $case->persons()->where('type', $type)->findOrFail($id);
+        $person->delete();
+
+        return response()->json(['message' => ucfirst($type) . ' deleted.']);
     }
 }
