@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Http\Controllers\Controller;
+use App\Jobs\HardDeleteEvidence;
 use App\Models\Evidence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -48,7 +49,7 @@ class EvidenceDeletionController extends Controller
          return response()->json(['message' => 'Deletion initiated.']);
      }
 
-     // Long polling status check
+    //  // Long polling status check
      public function checkDeletionStatus(Request $request, $id)
      {
          $statusKey = "evidence_deletion_status_{$id}";
@@ -68,4 +69,42 @@ class EvidenceDeletionController extends Controller
 
          return response()->json(['status' => 'In Progress']);
      }
+
+    // Initiate hard delete request
+    // public function initiateHardDelete($id)
+    // {
+    //     $user = Auth::user();
+
+    //     $evidence = Evidence::withTrashed()->findOrFail($id);
+
+    //     // Set status to In Progress in cache
+    //     $statusKey = "evidence_deletion_status_{$id}";
+    //     Cache::put($statusKey, 'In Progress', 60);
+
+    //     // Dispatch job to handle deletion
+    //     HardDeleteEvidence::dispatch($evidence, $user, $statusKey)->onQueue('deletions');
+
+    //     return response()->json(['message' => 'Deletion initiated.']);
+    // }
+
+    // Long polling status check
+    // public function checkDeletionStatus(Request $request, $id)
+    // {
+    //     $statusKey = "evidence_deletion_status_{$id}";
+
+    //     $timeout = 30; // seconds
+    //     $start = now();
+
+    //     while (now()->diffInSeconds($start) < $timeout) {
+    //         $status = Cache::get($statusKey);
+
+    //         if (in_array($status, ['Completed', 'Failed'])) {
+    //             return response()->json(['status' => $status]);
+    //         }
+
+    //         usleep(500000); // 0.5 second delay
+    //     }
+
+    //     return response()->json(['status' => 'In Progress']);
+    // }
 }

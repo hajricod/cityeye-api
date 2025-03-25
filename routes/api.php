@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\V1\Auth\AuthController;
 use App\Http\Controllers\Api\V1\CasePersonsController;
 use App\Http\Controllers\Api\V1\CasesController;
 use App\Http\Controllers\Api\V1\EvidenceController;
+use App\Http\Controllers\Api\V1\EvidenceDeletionController;
 use App\Http\Controllers\Api\V1\OfficerCasesController;
 use App\Http\Controllers\Api\V1\ReportsController;
 use App\Http\Controllers\Api\V1\UsersController;
@@ -31,6 +32,10 @@ Route::prefix('v1')->group(function () {
             Route::put('/users/{id}/role', [UsersController::class, 'updateUserRole']);
             Route::put('/users/{id}/auth_level', [UsersController::class, 'updateUserAuthLevel']);
             Route::get('/audit/evidence-actions', [AuditLogsController::class, 'evidenceLogs']);
+
+            // long polling hard-delete evidence
+            Route::post('/evidences/{id}/hard-delete', [EvidenceDeletionController::class, 'initiateHardDelete']);
+            Route::get('/evidences/{id}/deletion-status', [EvidenceDeletionController::class, 'checkDeletionStatus']);
         });
 
         Route::middleware([CheckRoleMiddleware::class . ':admin,investigator'])->group(function () {
