@@ -10,7 +10,7 @@ use App\Models\Cases;
 class EmailNotificationService
 {
     /**
-     * Notify users in the area about a new case.
+     * Notify users a new case.
      */
     public function notifyResidentsOfNewCase(Cases $case)
     {
