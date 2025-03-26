@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api\V1;
 use App\Enums\AuthorizationLevel;
 use App\Enums\CaseType;
 use App\Events\CaseCreated;
+use App\Events\CaseUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\CasePerson;
 use App\Models\Cases;
