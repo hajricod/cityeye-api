@@ -29,6 +29,8 @@ class HardDeleteEvidence implements ShouldQueue
 
     public function handle()
     {
+        sleep(5);
+
         try {
             $this->evidence->forceDelete();
 

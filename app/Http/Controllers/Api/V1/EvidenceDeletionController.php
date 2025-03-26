@@ -15,96 +15,50 @@ use Illuminate\Support\Str;
 
 class EvidenceDeletionController extends Controller
 {
-     // Initiate hard delete request
-     public function initiateHardDelete($id)
-     {
-         $user = Auth::user();
-
-         $evidence = Evidence::withTrashed()->findOrFail($id);
-
-         // Set status to In Progress in cache (for 1 minute)
-         $statusKey = "evidence_deletion_status_{$id}";
-         Cache::put($statusKey, 'In Progress', 60);
-
-         // Simulate async job with delay (replace with real Job dispatching)
-         dispatch(function () use ($evidence, $user, $statusKey) {
-             sleep(5); // Simulate delay
-             try {
-                 $evidence->forceDelete();
-
-                 // Log deletion
-                 AuditLog::create([
-                     'user_id' => $user->id,
-                     'action' => 'hard_deleted_evidence',
-                     'description' => "Evidence ID {$evidence->id} permanently deleted by {$user->name}"
-                 ]);
-
-                 Cache::put($statusKey, 'Completed', 60);
-             } catch (\Exception $e) {
-                 Cache::put($statusKey, 'Failed', 60);
-                 Log::error("Failed to hard delete evidence {$evidence->id}: " . $e->getMessage());
-             }
-         })->onQueue('deletions');
-
-         return response()->json(['message' => 'Deletion initiated.']);
-     }
-
-    //  // Long polling status check
-     public function checkDeletionStatus(Request $request, $id)
-     {
-         $statusKey = "evidence_deletion_status_{$id}";
-
-         $timeout = 30; // seconds
-         $start = now();
-
-         while (now()->diffInSeconds($start) < $timeout) {
-             $status = Cache::get($statusKey);
-
-             if (in_array($status, ['Completed', 'Failed'])) {
-                 return response()->json(['status' => $status]);
-             }
-
-             usleep(500000); // 0.5 second delay
-         }
-
-         return response()->json(['status' => 'In Progress']);
-     }
-
     // Initiate hard delete request
-    // public function initiateHardDelete($id)
-    // {
-    //     $user = Auth::user();
+    public function initiateHardDelete($id)
+    {
+        $user = Auth::user();
 
-    //     $evidence = Evidence::withTrashed()->findOrFail($id);
+        $evidence = Evidence::withTrashed()->findOrFail($id);
 
-    //     // Set status to In Progress in cache
-    //     $statusKey = "evidence_deletion_status_{$id}";
-    //     Cache::put($statusKey, 'In Progress', 60);
+        // Set status to In Progress in cache
+        $statusKey = "evidence_deletion_status_{$id}";
+        Cache::put($statusKey, 'In Progress', 60);
 
-    //     // Dispatch job to handle deletion
-    //     HardDeleteEvidence::dispatch($evidence, $user, $statusKey)->onQueue('deletions');
+        // Dispatch job to handle deletion
+        HardDeleteEvidence::dispatch($evidence, $user, $statusKey)->onQueue('deletions');
 
-    //     return response()->json(['message' => 'Deletion initiated.']);
-    // }
+        return response()->json(['message' => 'Deletion initiated.']);
+    }
 
     // Long polling status check
-    // public function checkDeletionStatus(Request $request, $id)
-    // {
-    //     $statusKey = "evidence_deletion_status_{$id}";
+    public function checkDeletionStatus(Request $request, $id)
+    {
+        $statusKey = "evidence_deletion_status_{$id}";
 
-    //     $timeout = 30; // seconds
-    //     $start = now();
+        $timeout = 30; // seconds
+        $interval = 0.5; // seconds
+        $startTime = microtime(true);
 
-    //     while (now()->diffInSeconds($start) < $timeout) {
-    //         $status = Cache::get($statusKey);
+        while ((microtime(true) - $startTime) < $timeout) {
+            $status = Cache::get($statusKey);
 
-    //         if (in_array($status, ['Completed', 'Failed'])) {
-    //             return response()->json(['status' => $status]);
-    //         }
+            if ($status === 'Completed' || $status === 'Failed') {
+                Log::info("Deletion status for evidence {$id}: {$status}");
+                return response()->json(['status' => $status]);
+            }
 
-    //         usleep(500000); // 0.5 second delay
-    //     }
+            usleep($interval * 1_000_000); // 0.5 second delay
+        }
 
-    //     return response()->json(['status' => 'In Progress']);
-    // }
+        // Return current status or fallback after timeout
+        $currentStatus = Cache::get($statusKey) ?? 'Unknown';
+        Log::info("Polling timeout for evidence {$id}. Last known status: {$currentStatus}");
+
+        return response()->json([
+            'status' => $currentStatus,
+            'message' => 'Polling timed out without status change.'
+        ]);
+    }
 }
