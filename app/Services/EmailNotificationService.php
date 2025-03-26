@@ -14,7 +14,7 @@ class EmailNotificationService
      */
     public function notifyResidentsOfNewCase(Cases $case)
     {
-        $users = User::where('city', $case->city)->get();
+        $users = User::all();
 
         foreach ($users as $user) {
             Mail::to($user->email)->queue(new CrimeNotification($user, $case, 'new_case'));
@@ -26,7 +26,7 @@ class EmailNotificationService
      */
     public function notifyResidentsOfCaseUpdate(Cases $case)
     {
-        $users = User::where('city', $case->city)->get();
+        $users = User::all();
 
         foreach ($users as $user) {
             Mail::to($user->email)->queue(new CrimeNotification($user, $case, 'case_update'));
