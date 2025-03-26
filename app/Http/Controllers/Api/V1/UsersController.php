@@ -154,4 +154,19 @@ class UsersController extends Controller
             'message' => 'User deleted successfully'
         ], 200);
     }
+
+    public function sendAlert(Request $request)
+    {
+        $request->validate([
+            'subject' => 'required|string|max:100',
+            'message' => 'required|string|max:1000',
+        ]);
+
+        (new \App\Services\EmailNotificationService)->sendSafetyAlert(
+            $request->subject,
+            $request->message
+        );
+
+        return response()->json(['message' => 'Alert sent to all users.']);
+    }
 }
