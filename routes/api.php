@@ -31,6 +31,7 @@ Route::prefix('v1')->group(function () {
             Route::put('/users/{id}/role', [UsersController::class, 'updateUserRole']);
             Route::put('/users/{id}/auth_level', [UsersController::class, 'updateUserAuthLevel']);
             Route::get('/audit/evidence-actions', [AuditLogsController::class, 'evidenceLogs']);
+            Route::post('/alerts/send', [UsersController::class, 'sendAlert']);
         });
 
         Route::middleware([CheckRoleMiddleware::class . ':admin,investigator'])->group(function () {
