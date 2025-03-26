@@ -6,6 +6,7 @@ use App\Enums\AuthorizationLevel;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\EmailNotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -162,7 +163,7 @@ class UsersController extends Controller
             'message' => 'required|string|max:1000',
         ]);
 
-        (new \App\Services\EmailNotificationService)->sendSafetyAlert(
+        (new EmailNotificationService)->sendSafetyAlert(
             $request->subject,
             $request->message
         );
