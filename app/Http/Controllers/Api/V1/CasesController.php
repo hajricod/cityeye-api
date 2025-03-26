@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\AuthorizationLevel;
 use App\Enums\CaseType;
+use App\Events\CaseCreated;
 use App\Http\Controllers\Controller;
 use App\Models\CasePerson;
 use App\Models\Cases;
@@ -90,6 +91,8 @@ class CasesController extends Controller
             Report::whereIn('id', $validated['report_ids'])
                 ->update(['case_id' => $case->id]);
         }
+
+        event(new CaseCreated($case));
 
         return response()->json([
             'message' => 'Case created successfully',
