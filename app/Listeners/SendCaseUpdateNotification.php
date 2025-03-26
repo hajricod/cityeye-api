@@ -2,24 +2,13 @@
 
 namespace App\Listeners;
 
-use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Queue\InteractsWithQueue;
+use App\Events\CaseUpdated;
+use App\Services\EmailNotificationService;
 
 class SendCaseUpdateNotification
 {
-    /**
-     * Create the event listener.
-     */
-    public function __construct()
+    public function handle(CaseUpdated $event): void
     {
-        //
-    }
-
-    /**
-     * Handle the event.
-     */
-    public function handle(object $event): void
-    {
-        //
+        (new EmailNotificationService)->notifyResidentsOfCaseUpdate($event->case);
     }
 }
