@@ -7,6 +7,7 @@ use App\Models\CaseComment;
 use App\Models\Cases;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\RateLimiter;
 
 class CaseCommentController extends Controller
 {
@@ -26,6 +27,19 @@ class CaseCommentController extends Controller
      */
     public function store(Request $request, $caseId)
     {
+        $user = auth()->user();
+        $key = 'comment-rate:' . $user->id;
+
+        // Check if user exceeded rate limit
+        if (RateLimiter::tooManyAttempts($key, 5)) {
+            return response()->json([
+                'message' => 'Too many comments. Please wait before posting again.'
+            ], 429);
+        }
+
+        // Allow 5 attempts per 60 seconds
+        RateLimiter::hit($key, 60);
+
         $request->validate([
             'comment' => [
                 'required',
