@@ -92,10 +92,19 @@ class CaseCommentController extends Controller
     public function destroy($caseId, $commentId)
     {
 
-        $comment = CaseComment::where('case_id', $caseId)
+        $role = Auth::user()->role->value;
+
+        if($role == UserRole::Admin->value) {
+            $comment = CaseComment::where('case_id', $caseId)
+            ->where('id', $commentId)
+            ->firstOrFail();
+        }else {
+            $comment = CaseComment::where('case_id', $caseId)
             ->where('id', $commentId)
             ->where('user_id', Auth::id())
             ->firstOrFail();
+        }
+
 
         $comment->delete();
 
