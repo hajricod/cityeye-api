@@ -49,7 +49,8 @@ class CasesSeeder extends Seeder
                 CaseAssignees::create([
                     'case_id' => $case->id,
                     'user_id' => $officer->id,
-                    'assigned_role' => 'officer'
+                    'assigned_role' => 'officer',
+                    'authorization_level' => $officer->authorization_level
                 ]);
             }
 

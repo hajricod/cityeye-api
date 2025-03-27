@@ -42,6 +42,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
 
             $table->enum('assigned_role', array_column(UserRole::cases(), 'value'))->default(UserRole::Officer);
+            $table->enum('authorization_level', array_column(AuthorizationLevel::cases(), 'value'))->nullable();
 
             $table->timestamps();
         });
