@@ -201,7 +201,7 @@ class CasesController extends Controller
             return response()->json(['message' => 'Case not found'], 404);
         }
 
-        // Delete the case (also delete related data if needed)
+        // Delete the case also delete related data
         $case->delete();
 
         return response()->json([

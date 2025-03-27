@@ -18,7 +18,7 @@ class OfficerCasesController extends Controller
         $cases = Cases::whereHas('assignees', function ($query) use ($officer) {
             $query->where('user_id', $officer->id);
         })
-        // ->with(['assignee', 'createdBy'])
+        ->with(['assignee', 'createdBy'])
         ->orderBy('created_at', 'desc')
         ->get();
 

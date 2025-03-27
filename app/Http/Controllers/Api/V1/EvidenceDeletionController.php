@@ -7,11 +7,8 @@ use App\Jobs\HardDeleteEvidence;
 use App\Models\Evidence;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use App\Models\AuditLog;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
-use Illuminate\Support\Facades\Response;
-use Illuminate\Support\Str;
 
 class EvidenceDeletionController extends Controller
 {
