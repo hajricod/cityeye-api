@@ -6,6 +6,7 @@ use App\Enums\AuthorizationLevel;
 use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Services\EmailNotificationService;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
@@ -153,5 +154,20 @@ class UsersController extends Controller
         return response()->json([
             'message' => 'User deleted successfully'
         ], 200);
+    }
+
+    public function sendAlert(Request $request)
+    {
+        $request->validate([
+            'subject' => 'required|string|max:100',
+            'message' => 'required|string|max:1000',
+        ]);
+
+        (new EmailNotificationService)->sendSafetyAlert(
+            $request->subject,
+            $request->message
+        );
+
+        return response()->json(['message' => 'Alert sent to all users.']);
     }
 }

@@ -36,6 +36,7 @@ Route::prefix('v1')->group(function () {
             // long polling hard-delete evidence
             Route::post('/evidences/{id}/hard-delete', [EvidenceDeletionController::class, 'initiateHardDelete']);
             Route::get('/evidences/{id}/deletion-status', [EvidenceDeletionController::class, 'checkDeletionStatus']);
+            Route::post('/alerts/send', [UsersController::class, 'sendAlert']);
         });
 
         Route::middleware([CheckRoleMiddleware::class . ':admin,investigator'])->group(function () {

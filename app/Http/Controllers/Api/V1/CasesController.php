@@ -4,6 +4,8 @@ namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\AuthorizationLevel;
 use App\Enums\CaseType;
+use App\Events\CaseCreated;
+use App\Events\CaseUpdated;
 use App\Http\Controllers\Controller;
 use App\Models\CasePerson;
 use App\Models\Cases;
@@ -91,6 +93,8 @@ class CasesController extends Controller
                 ->update(['case_id' => $case->id]);
         }
 
+        event(new CaseCreated($case));
+
         return response()->json([
             'message' => 'Case created successfully',
             'case' => $case
@@ -177,6 +181,8 @@ class CasesController extends Controller
         unset($validated['report_ids']);
 
         $case->update($validated);
+
+        event(new CaseUpdated($case));
 
         return response()->json([
             'message' => 'Case updated successfully',
