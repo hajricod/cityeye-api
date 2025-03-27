@@ -51,4 +51,9 @@ class User extends Authenticatable
             'authorization_level' => AuthorizationLevel::class,
         ];
     }
+
+    public function comments()
+    {
+        return $this->hasMany(CaseComment::class);
+    }
 }
