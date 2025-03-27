@@ -12,6 +12,11 @@ class Cases extends Model
 
     protected $guarded = [];
 
+    public function comments()
+    {
+        return $this->hasMany(CaseComment::class, 'case_id');
+    }
+
     public function creator()
     {
         return $this->belongsTo(User::class, 'created_by');

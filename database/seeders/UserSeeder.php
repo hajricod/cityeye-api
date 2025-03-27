@@ -20,5 +20,19 @@ class UserSeeder extends Seeder
             'password' => Hash::make('password'),
             'role' => UserRole::Admin,
         ]);
+
+        User::create([
+            'name' => 'Investigator',
+            'email' => 'investigator@cityeye.com',
+            'password' => Hash::make('password'),
+            'role' => UserRole::Investigator,
+        ]);
+
+        User::create([
+            'name' => 'Officer',
+            'email' => 'officer@cityeye.com',
+            'password' => Hash::make('password'),
+            'role' => UserRole::Officer,
+        ]);
     }
 }

@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\V1\AuditLogsController;
 use App\Http\Controllers\Api\V1\Auth\AuthController;
+use App\Http\Controllers\Api\V1\CaseCommentController;
 use App\Http\Controllers\Api\V1\CasePersonsController;
 use App\Http\Controllers\Api\V1\CasesController;
 use App\Http\Controllers\Api\V1\EvidenceController;
@@ -24,6 +25,10 @@ Route::prefix('v1')->group(function () {
     Route::get('/reports/{report_id}/status', [ReportsController::class, 'getReportStatus']);
 
     Route::middleware(BasicAuthMiddleware::class)->group(function () {
+
+        Route::post('/cases/{case}/comments', [CaseCommentController::class, 'store']);
+        Route::get('/cases/{case}/comments', [CaseCommentController::class, 'index']);
+        Route::delete('/cases/{case}/comments/{comment}', [CaseCommentController::class, 'destroy']);
 
         Route::middleware(CheckRoleMiddleware::class . ':admin')->prefix('admin')->group(function () {
             Route::apiResource('reports', ReportsController::class)->except(['store']);

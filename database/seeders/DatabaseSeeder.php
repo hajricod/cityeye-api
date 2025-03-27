@@ -31,7 +31,8 @@ class DatabaseSeeder extends Seeder
         $this->call([
             CasesSeeder::class,
             ReportSeeder::class,
-            EvidenceSeeder::class
+            EvidenceSeeder::class,
+            CaseCommentSeeder::class
         ]);
     }
 }
