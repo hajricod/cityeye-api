@@ -34,7 +34,6 @@ class UserFactory extends Factory
             'password' => static::$password ??= Hash::make('password'),
             'remember_token' => Str::random(10),
             'role' => $role->value,
-            'authorization_level' => $this->faker->randomElement(AuthorizationLevel::cases())->value,
             'authorization_level' => $role->value === UserRole::Officer->value
                 ? $this->faker->randomElement(AuthorizationLevel::cases())->value
                 : null,

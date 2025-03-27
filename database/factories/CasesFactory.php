@@ -4,6 +4,7 @@ namespace Database\Factories;
 
 use App\Enums\AuthorizationLevel;
 use App\Enums\CaseType;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Illuminate\Support\Str;
 use Illuminate\Support\Arr;
@@ -75,6 +76,8 @@ class CasesFactory extends Factory
 
         $selected = Arr::random($caseDetails);
 
+        $creator = User::whereIn('role', ['admin', 'investigator'])->inRandomOrder()->first();
+
         return [
             'case_number' => Str::upper(uniqid('CAS-')),
             'case_name' => $selected['name'],
@@ -83,7 +86,7 @@ class CasesFactory extends Factory
             'city' => Arr::random($cities),
             'case_type' => $this->faker->randomElement(CaseType::cases())->value,
             'authorization_level' => $this->faker->randomElement(AuthorizationLevel::cases())->value,
-            'created_by' => \App\Models\User::factory(),
+            'created_by' => $creator?->id,
             'created_at' => now(),
         ];
     }
