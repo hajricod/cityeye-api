@@ -27,7 +27,23 @@ class CaseCommentController extends Controller
     public function store(Request $request, $caseId)
     {
         $request->validate([
-            'comment' => 'required|string|max:1000',
+            'comment' => [
+                'required',
+                'string',
+                'min:5',
+                'max:150',
+                function ($attribute, $value, $fail) {
+                    if (preg_match('/<[^>]*>/', $value)) {
+                        $fail('HTML tags are not allowed in comments.');
+                    }
+                    if (!preg_match('/^[\pL\pN\s.,!?()\-\'";:]+$/u', $value)) {
+                        $fail('Comment contains invalid characters. Please use only letters, numbers, and basic punctuation.');
+                    }
+                },
+            ],
+        ], [
+            'comment.min' => 'Comment must be at least 5 characters long.',
+            'comment.max' => 'Comment cannot exceed 150 characters.',
         ]);
 
         $case = Cases::findOrFail($caseId);
