@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\Api\V1;
 
+use App\Enums\UserRole;
 use App\Http\Controllers\Controller;
 use App\Models\CaseComment;
 use App\Models\Cases;
@@ -11,13 +12,23 @@ use Illuminate\Support\Facades\RateLimiter;
 
 class CaseCommentController extends Controller
 {
+
     /**
      * Display a listing of the resource.
      */
     public function index($caseId)
     {
-        $case = Cases::findOrFail($caseId);
+        $case = Cases::with('assignees')->findOrFail($caseId);
+        $user = Auth::user();
+
+        if(!$case->assignees->contains('id', $user->id) && $user->role->value !== UserRole::Admin->value)
+            return response()->json('You are not assigned to this case.');
+
         $comments = $case->comments()->with('user:id,name')->latest()->get();
+
+        if(count($comments) == 0) {
+            return response()->json(["message" => 'No comments were posted']);
+        }
 
         return response()->json($comments);
     }
@@ -27,8 +38,12 @@ class CaseCommentController extends Controller
      */
     public function store(Request $request, $caseId)
     {
-        $user = auth()->user();
+        $user = Auth::user();
         $key = 'comment-rate:' . $user->id;
+        $case = Cases::with('assignees')->findOrFail($caseId);
+
+        if(!$case->assignees->contains('id', $user->id) && $user->role->value !== UserRole::Admin->value)
+            return response()->json('You are not assigned to this case.');
 
         // Check if user exceeded rate limit
         if (RateLimiter::tooManyAttempts($key, 5)) {
@@ -76,6 +91,7 @@ class CaseCommentController extends Controller
      */
     public function destroy($caseId, $commentId)
     {
+
         $comment = CaseComment::where('case_id', $caseId)
             ->where('id', $commentId)
             ->where('user_id', Auth::id())
