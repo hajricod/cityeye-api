@@ -14,10 +14,6 @@ use App\Http\Middleware\BasicAuthMiddleware;
 use App\Http\Middleware\CheckRoleMiddleware;
 use Illuminate\Support\Facades\Route;
 
-// Route::get('/user', function (Request $request) {
-//     return $request->user();
-// })->middleware('auth:sanctum');
-
 Route::prefix('v1')->group(function () {
 
     Route::post('report-crime', [ReportsController::class, 'store']);
@@ -55,12 +51,6 @@ Route::prefix('v1')->group(function () {
                 Route::get('/{case}/witnesses', [CasesController::class, 'witnesses']);
                 Route::get('/{id}/report', [CasesController::class, 'generatePdfReport']);
             });
-
-            // Route::prefix('/case-persons')->group(function () {
-            //     Route::get('/{case}', [CasePersonsController::class, 'index']);
-            //     Route::get('/{case}/{person}', [CasePersonsController::class, 'show']);
-            //     Route::delete('/{case}/{person}', [CasePersonsController::class, 'destroy']);
-            // });
 
             Route::prefix('cases/{case}/persons')->group(function () {
                 Route::get('all', [CasePersonsController::class, 'allPersons']);
