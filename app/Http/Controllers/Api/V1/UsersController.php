@@ -16,16 +16,16 @@ use Illuminate\Support\Facades\Validator;
 class UsersController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * GET all users
      */
     public function index(User $user)
     {
         $users = $user::all();
-        return response()->json($users, 200);
+        return response()->json(["users" => $users]);
     }
 
     /**
-     * Store a newly created resource in storage.
+     * POST new user
      */
     public function store(Request $request)
     {
@@ -57,7 +57,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * GET a specific user
      */
     public function show(User $user)
     {
@@ -65,7 +65,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * PUT a specific user
      */
     public function update(Request $request, User $user): JsonResponse
     {
@@ -84,7 +84,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Update user role.
+     * PUT user role.
      */
     public function updateUserRole(Request $request, $id): JsonResponse
     {
@@ -112,6 +112,9 @@ class UsersController extends Controller
         ], 200);
     }
 
+    /**
+     * PUT user authorization level.
+     */
     public function updateUserAuthLevel(Request $request, $id): JsonResponse
     {
         // Validate request
@@ -145,7 +148,7 @@ class UsersController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * DELETE a specific user.
      */
     public function destroy(User $user)
     {
@@ -156,6 +159,9 @@ class UsersController extends Controller
         ], 200);
     }
 
+    /**
+     * POST alert to all users.
+     */
     public function sendAlert(Request $request)
     {
         $request->validate([
