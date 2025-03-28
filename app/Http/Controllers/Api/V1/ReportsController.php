@@ -117,7 +117,7 @@ class ReportsController extends Controller
     }
 
     /**
-     * UPDATE crime report details
+     * PUT crime report details
      */
     public function update(Request $request, Report $report)
     {
