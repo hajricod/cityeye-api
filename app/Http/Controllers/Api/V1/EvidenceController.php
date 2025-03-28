@@ -14,7 +14,7 @@ class EvidenceController extends Controller
 {
 
     /**
-     * Store a newly created resource in storage.
+     * POST evidence.
      */
     public function store(Request $request, Cases $case)
     {
@@ -51,7 +51,7 @@ class EvidenceController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * GET specific evidence.
      */
     public function show(Evidence $evidence)
     {
@@ -86,6 +86,9 @@ class EvidenceController extends Controller
         }
     }
 
+    /**
+     * GET specific evidence based on type.
+     */
     public function getImage(Evidence $evidence)
     {
         // Check if evidence is of type 'image'
@@ -109,7 +112,7 @@ class EvidenceController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * PUT evidence details.
      */
     public function update(Request $request, Evidence $evidence)
     {
@@ -156,7 +159,7 @@ class EvidenceController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * DELETE specific evidence (soft-delete).
      */
     public function destroy(Evidence $evidence)
     {
@@ -168,6 +171,9 @@ class EvidenceController extends Controller
         return response()->json(['message' => 'Evidence soft-deleted successfully']);
     }
 
+    /**
+     * GET evidence delete confirmation.
+     */
     public function confirmDelete($id)
     {
         $evidence = Evidence::withTrashed()->findOrFail($id);
@@ -177,6 +183,9 @@ class EvidenceController extends Controller
         ]);
     }
 
+    /**
+     * DELETE specific evidence (hard-delete).
+     */
     public function hardDelete(Request $request, $id)
     {
         $evidence = Evidence::withTrashed()->findOrFail($id);
@@ -210,6 +219,9 @@ class EvidenceController extends Controller
         return response()->json(['message' => "Evidence ID {$evidence->id} permanently deleted."]);
     }
 
+    /**
+     * GET evidence image download.
+     */
     public function download(Evidence $evidence)
     {
         if ($evidence->type !== 'image' || !$evidence->file_path) {
@@ -223,6 +235,9 @@ class EvidenceController extends Controller
         return response()->file(storage_path('app/public/' . $evidence->file_path));
     }
 
+    /**
+     * GET evidence text analysis.
+     */
     public function textAnalysis()
     {
         // Get all text-based evidence descriptions
