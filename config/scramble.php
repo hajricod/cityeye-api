@@ -52,6 +52,11 @@ return [
             📈 Text analysis & link extraction for evidence and case descriptions
 
             This API is designed for scalability, security, and accountability, ensuring transparent crime tracking and improved response coordination across departments.
+
+            Based on the scenario you would like to use the api system you can login using:
+            1- admin@cityeye.com, 'password'
+            2- investigator@cityeye.com, 'password'
+            3- officer@cityeye.com, 'password'
         ",
     ],
 
