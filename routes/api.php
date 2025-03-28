@@ -29,7 +29,7 @@ Route::prefix('v1')->group(function () {
         Route::middleware(CheckRoleMiddleware::class . ':admin')->prefix('admin')->group(function () {
             Route::apiResource('reports', ReportsController::class)->except(['store']);
             Route::apiResource('users', UsersController::class);
-            Route::post('register', [AuthController::class, 'register']);
+            // Route::post('register', [AuthController::class, 'register']);
             Route::put('/users/{id}/role', [UsersController::class, 'updateUserRole']);
             Route::put('/users/{id}/auth_level', [UsersController::class, 'updateUserAuthLevel']);
             Route::get('/audit/evidence-actions', [AuditLogsController::class, 'evidenceLogs']);
@@ -87,6 +87,6 @@ Route::prefix('v1')->group(function () {
     });
 });
 
-Route::middleware(BasicAuthMiddleware::class)->get('/user', function () {
-    return response()->json(['message' => 'Authenticated successfully']);
-});
+// Route::middleware(BasicAuthMiddleware::class)->get('/user', function () {
+//     return response()->json(['message' => 'Authenticated successfully']);
+// });

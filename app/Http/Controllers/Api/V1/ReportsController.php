@@ -14,7 +14,7 @@ use Illuminate\Validation\Rule;
 class ReportsController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * GET crime reports
      */
     public function index()
     {
@@ -24,7 +24,8 @@ class ReportsController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * POST a crime report
+     * @unauthenticated
      */
     public function store(Request $request, Report $report)
     {
@@ -64,6 +65,10 @@ class ReportsController extends Controller
         ], 201);
     }
 
+    /**
+     * GET crime report status
+     * @unauthenticated
+     */
     public function status($reportId)
     {
         $report = Report::with('case')->where('report_id', $reportId)->first();
@@ -78,6 +83,10 @@ class ReportsController extends Controller
         ]);
     }
 
+    /**
+     * GET crime report case status
+     * @unauthenticated
+     */
     public function getReportStatus($report_id)
     {
         $report = Report::find($report_id);
@@ -100,7 +109,7 @@ class ReportsController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * GET crime report details
      */
     public function show(Report $report)
     {
@@ -108,7 +117,7 @@ class ReportsController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * UPDATE crime report details
      */
     public function update(Request $request, Report $report)
     {
@@ -133,7 +142,7 @@ class ReportsController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * DELETE crime report
      */
     public function destroy(Report $report)
     {
