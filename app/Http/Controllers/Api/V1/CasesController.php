@@ -182,7 +182,7 @@ class CasesController extends Controller
 
         $case->update($validated);
 
-        // event(new CaseUpdated($case));
+        event(new CaseUpdated($case));
 
         return response()->json([
             'message' => 'Case updated successfully',
