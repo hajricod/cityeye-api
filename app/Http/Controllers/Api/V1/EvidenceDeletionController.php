@@ -10,9 +10,12 @@ use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Log;
 
+
 class EvidenceDeletionController extends Controller
 {
-    // Initiate hard delete request
+    /**
+     * POST evidence hard-delete.
+     */
     public function initiateHardDelete($id)
     {
         $user = Auth::user();
@@ -29,7 +32,9 @@ class EvidenceDeletionController extends Controller
         return response()->json(['message' => 'Deletion initiated.']);
     }
 
-    // Long polling status check
+    /**
+     * GET evidence hard-delete status.
+     */
     public function checkDeletionStatus(Request $request, $id)
     {
         $statusKey = "evidence_deletion_status_{$id}";

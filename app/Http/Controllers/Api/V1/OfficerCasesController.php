@@ -11,6 +11,9 @@ use Illuminate\Validation\Rule;
 
 class OfficerCasesController extends Controller
 {
+    /**
+     * GET officer assigned cases.
+     */
     public function index()
     {
         $officer = Auth::user();
@@ -29,6 +32,9 @@ class OfficerCasesController extends Controller
         ]);
     }
 
+    /**
+     * PUT officer assigned case status.
+     */
     public function updateStatus(Request $request, $id)
     {
         $officer = Auth::user();
