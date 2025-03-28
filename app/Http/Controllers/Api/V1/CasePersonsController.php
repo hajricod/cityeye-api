@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api\V1;
 
 use App\Enums\CasePersonType;
+use App\Enums\CaseRole;
 use App\Enums\Gender;
 use App\Http\Controllers\Controller;
 use App\Models\Cases;
@@ -14,7 +15,7 @@ class CasePersonsController extends Controller
 
     protected function validateType($type)
     {
-        if (!in_array($type, array_column(CasePersonType::cases(), 'value'))) {
+        if (!in_array($type->value, array_column(CasePersonType::cases(), 'value'))) {
             abort(400, 'Invalid person type');
         }
     }
@@ -30,7 +31,7 @@ class CasePersonsController extends Controller
     /**
      * GET persons related to a case by type.
      */
-    public function index(Cases $case, $type)
+    public function index(Cases $case, CasePersonType $type)
     {
         $this->validateType($type);
         return response()->json($case->persons()->where('type', $type)->get());
@@ -39,7 +40,7 @@ class CasePersonsController extends Controller
     /**
      * POST a person related to a case by type.
      */
-    public function store(Request $request, Cases $case, $type)
+    public function store(Request $request, Cases $case, CasePersonType $type)
     {
         $this->validateType($type);
 
@@ -47,13 +48,13 @@ class CasePersonsController extends Controller
             'name' => 'required|string|max:255',
             'age' => 'required|integer|min:0',
             'gender' => ['required', Rule::in(array_column(Gender::cases(), 'value'))],
-            'role' => 'nullable|string|max:255',
+            'role' => ['sometimes', Rule::in(array_column(CaseRole::cases(), 'value'))],
         ]);
 
         $person = $case->persons()->create(array_merge($validated, ['type' => $type]));
 
         return response()->json([
-            'message' => ucfirst($type) . ' added successfully',
+            'message' => ucfirst($type->value) . ' added successfully',
             'data' => $person
         ], 201);
     }
@@ -61,7 +62,7 @@ class CasePersonsController extends Controller
     /**
      * GET a person related to a case by type.
      */
-    public function show(Cases $case, $type, $id)
+    public function show(Cases $case, CasePersonType $type, $id)
     {
         $this->validateType($type);
 
@@ -73,7 +74,7 @@ class CasePersonsController extends Controller
     /**
      * PUT a person related to a case by type.
      */
-    public function update(Request $request, Cases $case, $type, $id)
+    public function update(Request $request, Cases $case, CasePersonType $type, $id)
     {
         $this->validateType($type);
 
@@ -83,13 +84,13 @@ class CasePersonsController extends Controller
             'name' => 'sometimes|required|string|max:255',
             'age' => 'sometimes|required|integer|min:0',
             'gender' => ['sometimes', Rule::in(array_column(Gender::cases(), 'value'))],
-            'role' => 'nullable|string|max:255',
+            'role' => ['sometimes', Rule::in(array_column(CaseRole::cases(), 'value'))],
         ]);
 
         $person->update($validated);
 
         return response()->json([
-            'message' => ucfirst($type) . ' updated successfully.',
+            'message' => ucfirst($type->value) . ' updated successfully.',
             'data' => $person
         ]);
     }
@@ -97,13 +98,13 @@ class CasePersonsController extends Controller
     /**
      * DELETE a person related to a case by type.
      */
-    public function destroy(Cases $case, $type, $id)
+    public function destroy(Cases $case, CasePersonType $type, $id)
     {
         $this->validateType($type);
 
         $person = $case->persons()->where('type', $type)->findOrFail($id);
         $person->delete();
 
-        return response()->json(['message' => ucfirst($type) . ' deleted successfully.']);
+        return response()->json(['message' => ucfirst($type->value) . ' deleted successfully.']);
     }
 }
