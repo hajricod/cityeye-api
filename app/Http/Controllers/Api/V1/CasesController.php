@@ -20,7 +20,7 @@ use Barryvdh\DomPDF\Facade\Pdf;
 class CasesController extends Controller
 {
     /**
-     * Display a listing of the resource.
+     * GET all cases.
      */
     public function index(Request $request)
     {
@@ -59,7 +59,7 @@ class CasesController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * POST a new case.
      */
     public function store(Request $request)
     {
@@ -102,7 +102,7 @@ class CasesController extends Controller
     }
 
     /**
-     * Display the specified resource.
+     * GET specific case details.
      */
     public function show(Cases $case)
     {
@@ -157,7 +157,7 @@ class CasesController extends Controller
     }
 
     /**
-     * Update the specified resource in storage.
+     * PUT specific case details.
      */
     public function update(Request $request, Cases $case)
     {
@@ -182,7 +182,7 @@ class CasesController extends Controller
 
         $case->update($validated);
 
-        event(new CaseUpdated($case));
+        // event(new CaseUpdated($case));
 
         return response()->json([
             'message' => 'Case updated successfully',
@@ -192,7 +192,7 @@ class CasesController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * DELETE a case.
      */
     public function destroy($id)
     {
@@ -209,9 +209,12 @@ class CasesController extends Controller
         ]);
     }
 
+    /**
+     * GET case assignees.
+     */
     public function assignees(Cases $case)
     {
-        $assignees = $case->assignees()->select('user_id', 'name', 'email', 'role', 'authorization_level', 'case_assignees.created_at', 'case_assignees.updated_at')->get();
+        $assignees = $case->assignees()->select('user_id', 'name', 'email', 'role', 'case_assignees.authorization_level', 'case_assignees.created_at', 'case_assignees.updated_at')->get();
 
         foreach ($assignees as $assignee) {
             unset($assignee['pivot']);
@@ -220,6 +223,9 @@ class CasesController extends Controller
         return response()->json(['assignees' => $assignees], 200);
     }
 
+    /**
+     * GET case evidences.
+     */
     public function evidences(Cases $case)
     {
         $evidences = $case->evidences()->select('id', 'type', 'description', 'file_path', 'uploaded_by')->get();
@@ -227,6 +233,9 @@ class CasesController extends Controller
         return response()->json(['evidences' => $evidences], 200);
     }
 
+    /**
+     * GET case suspects.
+     */
     public function suspects(Cases $case)
     {
         $suspects = $case->persons()->where('type', 'suspect')->select('id', 'name', 'age', 'gender', 'role')->get();
@@ -234,6 +243,9 @@ class CasesController extends Controller
         return response()->json(['suspects' => $suspects], 200);
     }
 
+    /**
+     * GET case victims.
+     */
     public function victims(Cases $case)
     {
         $victims = $case->persons()->where('type', 'victim')->select('id', 'name', 'age', 'gender', 'role')->get();
@@ -241,6 +253,9 @@ class CasesController extends Controller
         return response()->json(['victims' => $victims], 200);
     }
 
+    /**
+     * GET case witnesses.
+     */
     public function witnesses(Cases $case)
     {
         $witnesses = $case->persons()->where('type', 'witness')->select('id', 'name', 'age', 'gender', 'role')->get();
@@ -248,7 +263,7 @@ class CasesController extends Controller
         return response()->json(['witnesses' => $witnesses], 200);
     }
 
-    function truncateDescription(string $text, int $limit = 100): string
+    protected function truncateDescription(string $text, int $limit = 100): string
     {
         if (strlen($text) <= $limit) {
             return $text;
@@ -265,6 +280,9 @@ class CasesController extends Controller
         return $truncated . ' ...';
     }
 
+    /**
+     * GET case extracted links.
+     */
     public function extractLinks($id)
     {
         $case = Cases::find($id);
@@ -302,6 +320,9 @@ class CasesController extends Controller
         ]);
     }
 
+    /**
+     * GET case generated report.
+     */
     public function generatePdfReport($id)
     {
         $case = Cases::with('creator')->find($id);
