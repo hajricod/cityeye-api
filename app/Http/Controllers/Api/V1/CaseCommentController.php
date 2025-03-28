@@ -14,7 +14,7 @@ class CaseCommentController extends Controller
 {
 
     /**
-     * Display a listing of the resource.
+     * GET comments by assignees
      */
     public function index($caseId)
     {
@@ -34,7 +34,7 @@ class CaseCommentController extends Controller
     }
 
     /**
-     * Store a newly created resource in storage.
+     * POST a comment to a case.
      */
     public function store(Request $request, $caseId)
     {
@@ -87,7 +87,7 @@ class CaseCommentController extends Controller
     }
 
     /**
-     * Remove the specified resource from storage.
+     * Delete a comment related to assignee.
      */
     public function destroy($caseId, $commentId)
     {
