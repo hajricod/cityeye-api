@@ -86,7 +86,3 @@ Route::prefix('v1')->group(function () {
 
     });
 });
-
-// Route::middleware(BasicAuthMiddleware::class)->get('/user', function () {
-//     return response()->json(['message' => 'Authenticated successfully']);
-// });
