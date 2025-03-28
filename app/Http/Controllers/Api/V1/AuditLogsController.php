@@ -7,6 +7,9 @@ use App\Models\AuditLog;
 
 class AuditLogsController extends Controller
 {
+    /**
+     * GET audit logs related to evidence actions
+     */
     public function evidenceLogs()
     {
         // Fetch logs related to evidence actions
