@@ -19,17 +19,26 @@ class CasePersonsController extends Controller
         }
     }
 
+    /**
+     * GET all persons related to a case.
+     */
     public function allPersons(Cases $case)
     {
         return response()->json($case->persons()->get());
     }
 
+    /**
+     * GET persons related to a case by type.
+     */
     public function index(Cases $case, $type)
     {
         $this->validateType($type);
         return response()->json($case->persons()->where('type', $type)->get());
     }
 
+    /**
+     * POST a person related to a case by type.
+     */
     public function store(Request $request, Cases $case, $type)
     {
         $this->validateType($type);
@@ -43,9 +52,15 @@ class CasePersonsController extends Controller
 
         $person = $case->persons()->create(array_merge($validated, ['type' => $type]));
 
-        return response()->json($person, 201);
+        return response()->json([
+            'message' => ucfirst($type) . ' added successfully',
+            'data' => $person
+        ], 201);
     }
 
+    /**
+     * GET a person related to a case by type.
+     */
     public function show(Cases $case, $type, $id)
     {
         $this->validateType($type);
@@ -55,6 +70,9 @@ class CasePersonsController extends Controller
         return response()->json($person);
     }
 
+    /**
+     * PUT a person related to a case by type.
+     */
     public function update(Request $request, Cases $case, $type, $id)
     {
         $this->validateType($type);
@@ -76,6 +94,9 @@ class CasePersonsController extends Controller
         ]);
     }
 
+    /**
+     * DELETE a person related to a case by type.
+     */
     public function destroy(Cases $case, $type, $id)
     {
         $this->validateType($type);
@@ -83,6 +104,6 @@ class CasePersonsController extends Controller
         $person = $case->persons()->where('type', $type)->findOrFail($id);
         $person->delete();
 
-        return response()->json(['message' => ucfirst($type) . ' deleted.']);
+        return response()->json(['message' => ucfirst($type) . ' deleted successfully.']);
     }
 }
