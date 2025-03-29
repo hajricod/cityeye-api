@@ -29,8 +29,8 @@ WORKDIR /var/www/html
 # Copy application files
 COPY . .
 
-RUN mkdir -p storage/logs \
-    && touch storage/logs/worker.log \
+RUN mkdir -p /var/www/html/storage/logs \
+    && touch /var/www/html/storage/logs/worker.log \
     && chmod -R 775 storage bootstrap/cache
 
 # Install Composer (optional if already installed)
