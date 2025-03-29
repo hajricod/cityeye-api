@@ -14,6 +14,8 @@ services:
       - "8000:8000"
     depends_on:
       - db
+    environment:
+      DB_HOST: db
 
   db:
     image: postgres:16
@@ -22,7 +24,7 @@ services:
     environment:
       POSTGRES_DB: cityeye_db
       POSTGRES_USER: cityeye
-      POSTGRES_PASSWORD: pa$$.w@rd
+      POSTGRES_PASSWORD: 1958?aA
     ports:
       - "5432:5432"
     volumes:

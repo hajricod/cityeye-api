@@ -38,29 +38,49 @@ cd cityeye-api
 cp .env.example .env
 ```
 
-#### Update the following in .env
+#### Update the following in .env (or put it at the end of the file)
 
 ```
-APP_KEY=
 QUEUE_CONNECTION=redis
 CACHE_DRIVER=redis
-REDIS_HOST=redis
+REDIS_CLIENT=phpredis
+REDIS_HOST=host.docker.internal
+REDIS_PASSWORD=null
+REDIS_PORT=6379
+
 DB_CONNECTION=pgsql
 DB_HOST=db
 DB_PORT=5432
 DB_DATABASE=cityeye_db
 DB_USERNAME=cityeye
-DB_PASSWORD=pa$$.w@rd
+DB_PASSWORD=1958?aA
+```
+
+#### config mailtrap for awarnace notification in .env (or put it at the end of the file)
+
+* sign up to http://mailtrap.io and use your username and password
+
+```
+MAIL_MAILER=smtp
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=setUpYourOwnUser
+MAIL_PASSWORD=setUpYourOwnPass
+MAIL_FROM_ADDRESS="admin@cityeye.com"
+MAIL_FROM_NAME="${APP_NAME}"
+MAIL_PASSMAIL_FROM_ADDRESS="admin@cityeye.com"
+MAIL_FROM_NAME="${APP_NAME}"
 ```
 
 ### 3. Build and run the containers
 
 ```bash
 docker-compose build --no-cache
+
 docker-compose up -d
 ```
 
-### 4. Generate app key (if not generated automatically)
+### 4. Generate app key
 
 ```bash
 docker-compose exec app php artisan key:generate
@@ -79,8 +99,6 @@ docker-compose exec app php artisan migrate --seed
 - Cases, assignees, reports, evidence records
 
 ## 👨‍✈️ Accessing the App
-
-- Laravel API: http://localhost:8000/api/v1
 
 - API Docs: http://localhost:8000/docs/api
 
