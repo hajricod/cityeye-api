@@ -2,7 +2,6 @@
 
 A robust Laravel 12-based API for managing crime reporting and investigation workflows in District Core. Features role-based access, evidence management, queue workers, background jobs, public crime reporting, notifications, and full Docker support.
 
----
 
 ## 🚀 Features
 
@@ -15,7 +14,6 @@ A robust Laravel 12-based API for managing crime reporting and investigation wor
 - 🔁 Redis & PostgreSQL integration
 - 🐳 Fully Dockerized (Laravel + Supervisor + Redis + PostgreSQL)
 
----
 
 ## ⚙️ Requirements
 
@@ -23,7 +21,6 @@ A robust Laravel 12-based API for managing crime reporting and investigation wor
 - PHP 8.3 (inside Docker)
 - Composer (handled via Docker)
 
----
 
 ## 📦 Quick Setup
 
