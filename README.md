@@ -46,11 +46,11 @@ QUEUE_CONNECTION=redis
 CACHE_DRIVER=redis
 REDIS_HOST=redis
 DB_CONNECTION=pgsql
-DB_HOST=pgsql
+DB_HOST=db
 DB_PORT=5432
-DB_DATABASE=cityeye
+DB_DATABASE=cityeye_db
 DB_USERNAME=cityeye
-DB_PASSWORD=secret
+DB_PASSWORD=pa$$.w@rd
 ```
 
 ### 3. Build and run the containers
