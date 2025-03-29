@@ -22,7 +22,7 @@ services:
     environment:
       POSTGRES_DB: cityeye_db
       POSTGRES_USER: cityeye
-      POSTGRES_PASSWORD: 19581123?aA
+      POSTGRES_PASSWORD: pa$$.w@rd
     ports:
       - "5432:5432"
     volumes:
