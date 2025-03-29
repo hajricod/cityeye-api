@@ -24,7 +24,7 @@ class CasesFactory extends Factory
         $caseDetails = [
             [
                 'name' => 'Theft Investigation',
-                'description' => 'An investigation into a reported theft at a commercial property where several high-value items were stolen under suspicious circumstances. The case involves analyzing surveillance footage and interviewing potential witnesses.'
+                'description' => 'An investigation into a reported theft at a commercial property where several high-value items were stolen under suspicious circumstances. The case involves www.xyz.com analyzing surveillance footage and interviewing potential witnesses.'
             ],
             [
                 'name' => 'Robbery Case',
@@ -32,7 +32,7 @@ class CasesFactory extends Factory
             ],
             [
                 'name' => 'Assault Incident',
-                'description' => 'A violent altercation reported in the downtown area where the victim sustained minor injuries. The suspect is known to the victim, and authorities are gathering statements and medical reports.'
+                'description' => 'A violent altercation reported in the downtown area where the victim sustained minor injuries. The suspect is known to the victim, and authorities are gathering statements and medical reports. www.example.com'
             ],
             [
                 'name' => 'Fraud Detection',
@@ -40,7 +40,7 @@ class CasesFactory extends Factory
             ],
             [
                 'name' => 'Missing Person Report',
-                'description' => 'A citizen has been reported missing after last being seen near the city center. Search efforts are underway, and authorities are appealing to the public for information that may assist in locating the individual.'
+                'description' => 'A citizen has been reported missing after last being seen samsam.net near the city center. Search efforts are underway, and authorities are appealing to the public for information that may assist in locating the individual.'
             ],
             [
                 'name' => 'Drug Trafficking Investigation',
