@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Admin',
             'email' => 'admin@cityeye.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('pa$$.w@rd'),
             'role' => UserRole::Admin,
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
@@ -30,7 +30,7 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Investigator',
             'email' => 'investigator@cityeye.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('pa$$.w@rd'),
             'role' => UserRole::Investigator,
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
@@ -39,14 +39,14 @@ class DatabaseSeeder extends Seeder
         User::create([
             'name' => 'Officer',
             'email' => 'officer@cityeye.com',
-            'password' => Hash::make('password'),
+            'password' => Hash::make('pa$$.w@rd'),
             'role' => UserRole::Officer,
             'authorization_level' => AuthorizationLevel::Critical,
             'email_verified_at' => now(),
             'remember_token' => Str::random(10),
         ]);
 
-        User::factory(100)->create();
+        User::factory(20)->create();
 
         $this->call([
             CasesSeeder::class,
