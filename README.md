@@ -129,7 +129,8 @@ supervisord -c /etc/supervisor/supervisord.conf
 You can test the queue by dispatching a job:
 ```bash
 php artisan tinker
-TestJob::dispatch();
+
+App\Jobs\TestJob::dispatch();
 ```
 
 Then check storage/logs/laravel.log.
