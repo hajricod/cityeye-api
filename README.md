@@ -100,7 +100,6 @@ docker-compose logs -f app
 ```bash
 docker-compose exec app tail -f storage/logs/worker.log
 ```
----
 
 ### Run queue worker manually
 
